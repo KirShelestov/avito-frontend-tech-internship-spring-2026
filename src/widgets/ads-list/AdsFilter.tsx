@@ -1,0 +1,144 @@
+import {
+    Card,
+    Stack,
+    Text,
+    Checkbox,
+    Switch,
+    Button,
+    Divider,
+    Group,
+    Collapse,
+} from "@mantine/core";
+import { useState } from "react";
+
+export function AdsFilters({
+    onlyRevision,
+    setOnlyRevision,
+    categories,
+    setCategories,
+}: any) {
+    const [opened, setOpened] = useState(true);
+
+    const handleCategoryChange = (category: string, checked: boolean) => {
+        if (checked) {
+            setCategories([...categories, category]);
+        } else {
+            setCategories(categories.filter((c) => c !== category));
+        }
+    };
+
+    const handleReset = () => {
+        setOnlyRevision(false);
+        setCategories([]);
+    };
+
+    return (
+        <Stack gap="sm">
+            <Card
+                radius="lg"
+                p="md"
+                style={{
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #e9ecef",
+                }}
+            >
+                <Stack gap="md">
+                    <Text fw={600} size="sm">
+                        Фильтры
+                    </Text>
+
+                    <Stack gap={6}>
+                        <Group
+                            justify="space-between"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setOpened((o) => !o)}
+                        >
+                            <Text size="sm" fw={500}>
+                                Категория
+                            </Text>
+
+                            <Text
+                                size="sm"
+                                style={{
+                                    transform: opened
+                                        ? "rotate(180deg)"
+                                        : "rotate(0deg)",
+                                    transition: "0.2s",
+                                }}
+                            >
+                                ⌃
+                            </Text>
+                        </Group>
+
+                        <Collapse in={opened}>
+                            <Stack gap={6} mt={4}>
+                                <Checkbox
+                                    label="Авто"
+                                    checked={categories.includes("auto")}
+                                    onChange={(e) =>
+                                        handleCategoryChange(
+                                            "auto",
+                                            e.currentTarget.checked,
+                                        )
+                                    }
+                                />
+
+                                <Checkbox
+                                    label="Электроника"
+                                    checked={categories.includes("electronics")}
+                                    onChange={(e) =>
+                                        handleCategoryChange(
+                                            "electronics",
+                                            e.currentTarget.checked,
+                                        )
+                                    }
+                                />
+
+                                <Checkbox
+                                    label="Недвижимость"
+                                    checked={categories.includes("real_estate")}
+                                    onChange={(e) =>
+                                        handleCategoryChange(
+                                            "real_estate",
+                                            e.currentTarget.checked,
+                                        )
+                                    }
+                                />
+                            </Stack>
+                        </Collapse>
+                    </Stack>
+
+                    <Divider color="#dee2e6" />
+
+                    <Group justify="space-between" align="center">
+                        <Text size="sm" fw={500}>
+                            Только требующие доработок
+                        </Text>
+
+                        <Switch
+                            withThumbIndicator={false}
+                            checked={onlyRevision}
+                            onChange={(e) =>
+                                setOnlyRevision(e.currentTarget.checked)
+                            }
+                        />
+                    </Group>
+                </Stack>
+            </Card>
+
+            <Button
+                fullWidth
+                radius="md"
+                variant="subtle"
+                color="gray"
+                onClick={handleReset}
+                style={{
+                    backgroundColor: "#FFFFFF",
+                    color: "gray",
+                }}
+            >
+                Сбросить фильтры
+            </Button>
+        </Stack>
+    );
+}

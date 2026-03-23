@@ -15,3 +15,7 @@ export const getItems = (params: {
 export const getItemById = (id: number) => {
   return api.get(`/items/${id}`);
 };
+
+export const updateItem = (id: number, data: any) => {
+  return api.put(`/items/${id}`, data);
+};

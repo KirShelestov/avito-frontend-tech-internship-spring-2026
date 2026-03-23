@@ -11,3 +11,7 @@ export const getItems = (params: {
 }) => {
   return api.get("/items", { params });
 };
+
+export const getItemById = (id: number) => {
+  return api.get(`/items/${id}`);
+};

@@ -7,12 +7,16 @@ import {
     AspectRatio,
     Stack,
 } from "@mantine/core";
+import { Link } from "react-router-dom";
 import { CATEGORY_NAMES } from "../../../shared/constants/constants";
 
 export function AdCard({ ad, listView = false }: any) {
+    console.log("add", ad);
     if (listView) {
         return (
             <Card
+                component={Link}
+                to={`/ads/${ad.id}`}
                 withBorder
                 radius="lg"
                 p="sm"
@@ -22,6 +26,7 @@ export function AdCard({ ad, listView = false }: any) {
                     flexDirection: "row",
                     gap: 12,
                     alignItems: "flex-start",
+                    textDecoration: "none",
                 }}
             >
                 <Box style={{ flexShrink: 0, width: 100, height: 100 }}>
@@ -85,10 +90,12 @@ export function AdCard({ ad, listView = false }: any) {
 
     return (
         <Card
+            component={Link}
+            to={`/ads/${ad.id}`}
             withBorder
             radius="lg"
             p="sm"
-            style={{ height: "100%", width: "100%" }}
+            style={{ height: "100%", width: "100%", textDecoration: "none" }}
         >
             <AspectRatio ratio={1} mb="xs">
                 <Image

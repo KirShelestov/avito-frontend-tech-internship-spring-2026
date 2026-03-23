@@ -105,6 +105,7 @@ fastify.get<ItemsGetRequest>('/items', request => {
       })
       .slice(skip, skip + limit)
       .map(item => ({
+        id: item.id, // тут вот как бы надо айди вернуть, но почему-то изначально этого не было
         category: item.category,
         title: item.title,
         price: item.price,

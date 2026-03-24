@@ -1,0 +1,22 @@
+{
+    "name": "avito-server-llm",
+    "version": "1.0.0",
+    "description": "LLM proxy for Grok (Avito internship)",
+    "type": "module",
+    "main": "server.ts",
+    "scripts": {
+        "start": "tsx server.ts"
+    },
+    "dependencies": {
+        "@fastify/cors": "^8.5.0",
+        "@fastify/middie": "^9.1.0",
+        "dotenv": "^17.3.1",
+        "fastify": "^4.29.1",
+        "google-auth-library": "^10.6.2"
+    },
+    "devDependencies": {
+        "@types/node": "^20.19.37",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
+    }
+}

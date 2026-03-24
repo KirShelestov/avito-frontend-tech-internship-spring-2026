@@ -19,6 +19,13 @@ import { IconBulb, IconX, IconAlertCircle } from "@tabler/icons-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getItemById, updateItem } from "../../entities/ad/api/adApi";
+import { callGemini } from "../../shared/api/llmApi";
+import {
+    buildAdContext,
+    buildImproveDescriptionPrompt,
+    buildMarketPricePrompt,
+    parsePriceFromText,
+} from "../../entities/ad/utils/llmAdUtils";
 import type { AdItem } from "../../entities/ad/types";
 
 type FormData = {
@@ -63,6 +70,8 @@ export default function AdsRefactorPage() {
     const [ad, setAd] = useState<AdItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiMessage, setAiMessage] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>({
         category: "",
@@ -206,6 +215,73 @@ export default function AdsRefactorPage() {
             ...prev,
             params: { ...prev.params, [key]: value },
         }));
+    };
+
+    const handleImproveDescription = async () => {
+        if (!formData.title.trim()) {
+            setError(
+                "Пожалуйста, укажите название объявления перед улучшением текста",
+            );
+            return;
+        }
+
+        setError(null);
+        setAiLoading(true);
+        setAiMessage("");
+
+        const context = buildAdContext(formData);
+        const prompt = buildImproveDescriptionPrompt(context);
+
+        try {
+            const result = await callGemini(prompt);
+            if (result.trim()) {
+                setFormData((prev) => ({
+                    ...prev,
+                    description: result.trim(),
+                }));
+                setAiMessage(
+                    "Описание улучшено Gemini (можно дополнительно отредактировать).",
+                );
+            } else {
+                setAiMessage("Gemini вернул пустой ответ.");
+            }
+        } catch (err) {
+            console.error("AI Improve error", err);
+            setError(`Не удалось улучшить описание: ${err}`);
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    const handleMarketPrice = async () => {
+        setError(null);
+        setAiLoading(true);
+        setAiMessage("");
+
+        const context = buildAdContext(formData);
+        const prompt = buildMarketPricePrompt(context);
+
+        try {
+            const result = await callGemini(prompt);
+            if (result.trim()) {
+                const price = parsePriceFromText(result);
+                if (price) {
+                    setFormData((prev) => ({ ...prev, price }));
+                    setAiMessage(
+                        `Gemini оценка: ${result.trim()} (авто-установлено ${price}).`,
+                    );
+                } else {
+                    setAiMessage(`Gemini оценка: ${result.trim()}`);
+                }
+            } else {
+                setAiMessage("Gemini не вернул информацию по цене.");
+            }
+        } catch (err) {
+            console.error("AI Price error", err);
+            setError(`Не удалось получить цену: ${err}`);
+        } finally {
+            setAiLoading(false);
+        }
     };
 
     if (loading) {
@@ -420,8 +496,9 @@ export default function AdsRefactorPage() {
                     }}
                 />
                 <Box
+                    onClick={handleMarketPrice}
                     style={{
-                        backgroundColor: "#FFF4E6",
+                        backgroundColor: aiLoading ? "#EDF2FF" : "#FFF4E6",
                         padding: "8px 12px",
                         borderRadius: "6px",
                         display: "flex",
@@ -433,7 +510,7 @@ export default function AdsRefactorPage() {
                 >
                     <IconBulb size={14} color="#FD7E14" />
                     <Text size="xs" c="#FD7E14" fw={500}>
-                        Узнать рыночную цену
+                        {aiLoading ? "Запрос цены..." : "Узнать рыночную цену"}
                     </Text>
                 </Box>
             </Group>
@@ -463,25 +540,36 @@ export default function AdsRefactorPage() {
                     />
                     <Group justify="space-between">
                         <Box
+                            onClick={handleImproveDescription}
                             style={{
-                                backgroundColor: "#FFF4E6",
+                                backgroundColor: aiLoading
+                                    ? "#EDF2FF"
+                                    : "#FFF4E6",
                                 padding: "6px 10px",
                                 borderRadius: "6px",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "6px",
                                 width: "fit-content",
+                                cursor: "pointer",
                             }}
                         >
                             <IconBulb size={14} color="#FD7E14" />
                             <Text size="xs" c="#FD7E14" fw={500}>
-                                Улучшить описание
+                                {aiLoading
+                                    ? "Генерация описания..."
+                                    : "Улучшить описание"}
                             </Text>
                         </Box>
                         <Text size="xs" c="dimmed">
                             {formData.description.length} / 1000
                         </Text>
                     </Group>
+                    {aiMessage && (
+                        <Text size="xs" c="teal" mt="xs">
+                            {aiMessage}
+                        </Text>
+                    )}
                 </Stack>
 
                 <Group mt="xl">

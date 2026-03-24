@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 import { CATEGORY_NAMES } from "../../../shared/constants/constants";
 
 export function AdCard({ ad, listView = false }: any) {
-    console.log("add", ad);
     if (listView) {
         return (
             <Card
@@ -40,17 +39,14 @@ export function AdCard({ ad, listView = false }: any) {
                 </Box>
 
                 <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
-                    <Box
-                        style={{
-                            display: "inline-block",
-                            color: "#343a40",
-                            fontSize: 11,
-                            fontWeight: 500,
-                            width: "fit-content",
-                        }}
+                    <Text
+                        c="gray.7"
+                        size="xs"
+                        fw={500}
+                        style={{ display: "inline-block" }}
                     >
                         {CATEGORY_NAMES[ad.category] || ad.category}
-                    </Box>
+                    </Text>
 
                     <Text size="sm" fw={500} lineClamp={1}>
                         {ad.title}
@@ -65,7 +61,7 @@ export function AdCard({ ad, listView = false }: any) {
                             gap={6}
                             style={{
                                 width: "fit-content",
-                                backgroundColor: "#fcf7d1",
+                                backgroundColor: "var(--mantine-color-yellow-1)",
                                 padding: "2px 6px",
                                 borderRadius: 8,
                             }}
@@ -75,10 +71,10 @@ export function AdCard({ ad, listView = false }: any) {
                                     width: 6,
                                     height: 6,
                                     borderRadius: "50%",
-                                    backgroundColor: "#f59f00",
+                                    backgroundColor: "var(--mantine-color-yellow-6)",
                                 }}
                             />
-                            <Text size="xs" c="#f59f00">
+                            <Text size="xs" c="yellow.6">
                                 Требует доработок
                             </Text>
                         </Group>
@@ -102,7 +98,7 @@ export function AdCard({ ad, listView = false }: any) {
                     src="https://placehold.co/400x400"
                     radius="md"
                     styles={{
-                        root: { backgroundColor: "#e9ecef" },
+                        root: { backgroundColor: "var(--mantine-color-gray-2)" },
                     }}
                 />
             </AspectRatio>
@@ -113,12 +109,12 @@ export function AdCard({ ad, listView = false }: any) {
                     display: "inline-block",
                     padding: "6px 14px",
                     borderRadius: 12,
-                    border: "1px solid #ced4da",
-                    color: "#343a40",
+                    border: "1px solid var(--mantine-color-gray-4)",
                     fontSize: 12,
                     fontWeight: 500,
                     backgroundColor: "transparent",
                     width: "fit-content",
+                    color: "var(--mantine-color-gray-7)",
                 }}
             >
                 {CATEGORY_NAMES[ad.category] || ad.category}
@@ -138,7 +134,7 @@ export function AdCard({ ad, listView = false }: any) {
                     mt={4}
                     style={{
                         width: "fit-content",
-                        backgroundColor: "#fcf7d1",
+                        backgroundColor: "var(--mantine-color-yellow-1)",
                         padding: "4px 8px",
                         borderRadius: 8,
                     }}
@@ -148,11 +144,11 @@ export function AdCard({ ad, listView = false }: any) {
                             width: 6,
                             height: 6,
                             borderRadius: "50%",
-                            backgroundColor: "#f59f00",
+                            backgroundColor: "var(--mantine-color-yellow-6)",
                             flexShrink: 0,
                         }}
                     />
-                    <Text size="xs" c="#f59f00">
+                    <Text size="xs" c="yellow.6">
                         Требует доработок
                     </Text>
                 </Group>

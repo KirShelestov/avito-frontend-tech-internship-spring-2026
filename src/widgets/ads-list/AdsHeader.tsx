@@ -16,6 +16,7 @@ import {
     IconLayoutList,
 } from "@tabler/icons-react";
 import { useState } from "react";
+import { ThemeToggle } from "../theme/ThemeToggle";
 
 export function AdsHeader({
     search,
@@ -43,7 +44,7 @@ export function AdsHeader({
             <Group
                 justify="space-between"
                 style={{
-                    backgroundColor: "#FFFFFF",
+                    backgroundColor: "var(--mantine-color-gray-0)",
                     padding: 12,
                     borderRadius: 8,
                 }}
@@ -59,7 +60,7 @@ export function AdsHeader({
                             flex: 1,
                         },
                         input: {
-                            backgroundColor: "#f7f5f8",
+                            backgroundColor: "var(--mantine-color-gray-1)",
                             border: "none",
                             "&:focus": {
                                 outline: "none",
@@ -93,7 +94,7 @@ export function AdsHeader({
                                 >
                                     <IconLayoutGrid
                                         size={16}
-                                        color={gridView ? "#1890FF" : "black"}
+                                        color={gridView ? "var(--mantine-color-blue-6)" : "var(--mantine-color-gray-6)"}
                                     />
                                 </div>
                             ),
@@ -111,7 +112,7 @@ export function AdsHeader({
                                 >
                                     <IconLayoutList
                                         size={16}
-                                        color={!gridView ? "#1890FF" : "black"}
+                                        color={!gridView ? "var(--mantine-color-blue-6)" : "var(--mantine-color-gray-6)"}
                                     />
                                 </div>
                             ),
@@ -120,7 +121,7 @@ export function AdsHeader({
                 />
                 <Container
                     style={{
-                        backgroundColor: "#f7f5f8",
+                        backgroundColor: "var(--mantine-color-gray-1)",
                         padding: 6,
                         borderRadius: 8,
                     }}
@@ -184,6 +185,8 @@ export function AdsHeader({
                         rightSectionPointerEvents="none"
                     />
                 </Container>
+
+                <ThemeToggle />
             </Group>
         </Stack>
     );

@@ -37,10 +37,7 @@ export function AdsFilters({
             <Card
                 radius="lg"
                 p="md"
-                style={{
-                    backgroundColor: "#FFFFFF",
-                    border: "1px solid #e9ecef",
-                }}
+                withBorder
             >
                 <Stack gap="md">
                     <Text fw={600} size="sm">
@@ -108,7 +105,7 @@ export function AdsFilters({
                         </Collapse>
                     </Stack>
 
-                    <Divider color="#dee2e6" />
+                    <Divider />
 
                     <Group justify="space-between" align="center">
                         <Text size="sm" fw={500}>
@@ -132,10 +129,6 @@ export function AdsFilters({
                 variant="subtle"
                 color="gray"
                 onClick={handleReset}
-                style={{
-                    backgroundColor: "#FFFFFF",
-                    color: "gray",
-                }}
             >
                 Сбросить фильтры
             </Button>

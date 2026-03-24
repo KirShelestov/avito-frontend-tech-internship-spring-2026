@@ -13,14 +13,14 @@ import {
     Divider,
 } from "@mantine/core";
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState, useMemo } from "react";
-import { getItemById } from "../../entities/ad/api/adApi";
+import { useEffect, useMemo } from "react";
 import { IconPencil, IconAlertCircle } from "@tabler/icons-react";
 import {
     getMissingFields,
     getCharacteristics,
 } from "../../entities/ad/utils/adViewUtils";
 import type { AdItem } from "../../entities/ad/types";
+import { useAdsItemStore } from "../../entities/ad/adsItemStore";
 
 const formatDate = (isoString: string): string => {
     const date = new Date(isoString);
@@ -46,28 +46,27 @@ const formatDate = (isoString: string): string => {
 export default function AdViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [ad, setAd] = useState<AdItem | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { ad, loading, error, fetchAd, reset } = useAdsItemStore();
 
     useEffect(() => {
-        if (!id) {
-            setLoading(false);
-            return;
-        }
+        if (!id) return;
+        fetchAd(id);
+    }, [id, fetchAd]);
 
-        getItemById(Number(id))
-            .then((res) => setAd(res.data))
-            .finally(() => setLoading(false));
-    }, [id]);
+    useEffect(() => {
+        return () => {
+            reset();
+        };
+    }, [reset]);
 
     const missingFields = useMemo(() => {
         if (!ad) return [];
-        return getMissingFields(ad);
+        return getMissingFields(ad as AdItem);
     }, [ad]);
 
     const characteristics = useMemo(() => {
         if (!ad) return [];
-        return getCharacteristics(ad);
+        return getCharacteristics(ad as AdItem);
     }, [ad]);
 
     if (loading)
@@ -76,10 +75,10 @@ export default function AdViewPage() {
                 <Loader />
             </Center>
         );
-    if (!ad)
+    if (!ad || error)
         return (
             <Center h="100vh">
-                <Text>Не найдено</Text>
+                <Text>{error || "Не найдено"}</Text>
             </Center>
         );
 
@@ -133,7 +132,7 @@ export default function AdViewPage() {
                 <Grid.Col span={7}>
                     <Box
                         style={{
-                            backgroundColor: "#f8f9fa",
+                            backgroundColor: "var(--mantine-color-gray-1)",
                             borderRadius: 4,
                             height: 420,
                             display: "flex",
@@ -156,7 +155,7 @@ export default function AdViewPage() {
                         {ad.needsRevision && missingFields.length > 0 && (
                             <Box
                                 style={{
-                                    backgroundColor: "#F9F3E9",
+                                    backgroundColor: "var(--mantine-color-yellow-1)",
                                     padding: "20px",
                                     borderRadius: "12px",
                                     display: "flex",
@@ -167,7 +166,7 @@ export default function AdViewPage() {
                             >
                                 <IconAlertCircle
                                     size={20}
-                                    color="#f59f00"
+                                    color="var(--mantine-color-yellow-6)"
                                     style={{ flexShrink: 0, marginTop: 2 }}
                                 />
                                 <Stack gap={4}>

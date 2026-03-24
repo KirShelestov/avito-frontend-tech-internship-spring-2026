@@ -120,7 +120,21 @@ export default function AdsRefactorPage() {
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <TextInput
                         radius={8}
@@ -131,7 +145,21 @@ export default function AdsRefactorPage() {
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <NumberInput
                         radius={8}
@@ -142,6 +170,21 @@ export default function AdsRefactorPage() {
                             onParamChange("yearOfManufacture", value)
                         }
                         w="100%"
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <Select
                         radius={8}
@@ -153,7 +196,21 @@ export default function AdsRefactorPage() {
                             onParamChange("transmission", value)
                         }
                         w="100%"
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <NumberInput
                         radius={8}
@@ -163,6 +220,21 @@ export default function AdsRefactorPage() {
                             value != null && onParamChange("mileage", value)
                         }
                         w="100%"
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <NumberInput
                         radius={8}
@@ -172,7 +244,18 @@ export default function AdsRefactorPage() {
                             value != null && onParamChange("enginePower", value)
                         }
                         w="100%"
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty = props.value == null;
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                 </Stack>
             );
@@ -190,7 +273,21 @@ export default function AdsRefactorPage() {
                             value != null && onParamChange("type", value)
                         }
                         w="100%"
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <TextInput
                         radius={8}
@@ -203,7 +300,21 @@ export default function AdsRefactorPage() {
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <NumberInput
                         radius={8}
@@ -213,7 +324,18 @@ export default function AdsRefactorPage() {
                             value != null && onParamChange("area", value)
                         }
                         w="100%"
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty = props.value == null;
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <NumberInput
                         radius={8}
@@ -223,7 +345,18 @@ export default function AdsRefactorPage() {
                             value != null && onParamChange("floor", value)
                         }
                         w="100%"
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty = props.value == null;
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                 </Stack>
             );
@@ -251,7 +384,21 @@ export default function AdsRefactorPage() {
                             )
                         }
                         rightSectionPointerEvents="none"
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <TextInput
                         radius={8}
@@ -262,7 +409,21 @@ export default function AdsRefactorPage() {
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <TextInput
                         radius={8}
@@ -273,7 +434,21 @@ export default function AdsRefactorPage() {
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <TextInput
                         radius={8}
@@ -284,7 +459,21 @@ export default function AdsRefactorPage() {
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <Select
                         radius={8}
@@ -305,7 +494,21 @@ export default function AdsRefactorPage() {
                             )
                         }
                         rightSectionPointerEvents="none"
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                 </Stack>
             );
@@ -334,7 +537,20 @@ export default function AdsRefactorPage() {
             <Stack maw={400} gap="md">
                 <Select
                     radius={8}
-                    styles={{ input: { border: "2px solid #D9D9D9" } }}
+                    styles={(theme, props) => {
+                        const isEmpty =
+                            !props.value ||
+                            (typeof props.value === "string" &&
+                                props.value.trim() === "");
+                        return {
+                            input: {
+                                border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                "&:focus": {
+                                    borderColor: "var(--mantine-color-blue-6)",
+                                },
+                            },
+                        };
+                    }}
                     label="Категория"
                     placeholder="Выберите категорию"
                     data={CATEGORY_OPTIONS}
@@ -365,7 +581,20 @@ export default function AdsRefactorPage() {
                         <IconCircleXFilled size={14} color="#D9D9D9" />
                     }
                     w="100%"
-                    styles={{ input: { border: "2px solid #D9D9D9" } }}
+                    styles={(theme, props) => {
+                        const isEmpty =
+                            !props.value ||
+                            (typeof props.value === "string" &&
+                                props.value.trim() === "");
+                        return {
+                            input: {
+                                border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                "&:focus": {
+                                    borderColor: "var(--mantine-color-blue-6)",
+                                },
+                            },
+                        };
+                    }}
                 />
             </Stack>
 
@@ -385,9 +614,18 @@ export default function AdsRefactorPage() {
                         <IconCircleXFilled size={14} color="#D9D9D9" />
                     }
                     style={{ flex: 1, maxWidth: 400 }}
-                    styles={{
-                        input: { width: "100%", border: "2px solid #D9D9D9" },
-                        wrapper: { flex: 1 },
+                    styles={(theme, props) => {
+                        const isEmpty = props.value == null;
+                        return {
+                            input: {
+                                width: "100%",
+                                border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                "&:focus": {
+                                    borderColor: "var(--mantine-color-blue-6)",
+                                },
+                            },
+                            wrapper: { flex: 1 },
+                        };
                     }}
                 />
                 <AiPopover
@@ -445,7 +683,21 @@ export default function AdsRefactorPage() {
                         onChange={(e) =>
                             onInputChange("description", e.target.value)
                         }
-                        styles={{ input: { border: "2px solid #D9D9D9" } }}
+                        styles={(theme, props) => {
+                            const isEmpty =
+                                !props.value ||
+                                (typeof props.value === "string" &&
+                                    props.value.trim() === "");
+                            return {
+                                input: {
+                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                    "&:focus": {
+                                        borderColor:
+                                            "var(--mantine-color-blue-6)",
+                                    },
+                                },
+                            };
+                        }}
                     />
                     <Group justify="space-between">
                         <AiPopover

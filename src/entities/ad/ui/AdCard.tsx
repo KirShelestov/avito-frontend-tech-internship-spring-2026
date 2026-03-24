@@ -61,7 +61,8 @@ export function AdCard({ ad, listView = false }: any) {
                             gap={6}
                             style={{
                                 width: "fit-content",
-                                backgroundColor: "var(--mantine-color-yellow-1)",
+                                backgroundColor:
+                                    "var(--mantine-color-yellow-1)",
                                 padding: "2px 6px",
                                 borderRadius: 8,
                             }}
@@ -71,7 +72,8 @@ export function AdCard({ ad, listView = false }: any) {
                                     width: 6,
                                     height: 6,
                                     borderRadius: "50%",
-                                    backgroundColor: "var(--mantine-color-yellow-6)",
+                                    backgroundColor:
+                                        "var(--mantine-color-yellow-6)",
                                 }}
                             />
                             <Text size="xs" c="yellow.6">
@@ -98,7 +100,9 @@ export function AdCard({ ad, listView = false }: any) {
                     src="https://placehold.co/400x400"
                     radius="md"
                     styles={{
-                        root: { backgroundColor: "var(--mantine-color-gray-2)" },
+                        root: {
+                            backgroundColor: "var(--mantine-color-gray-2)",
+                        },
                     }}
                 />
             </AspectRatio>

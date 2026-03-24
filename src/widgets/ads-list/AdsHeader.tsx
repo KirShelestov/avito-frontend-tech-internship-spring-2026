@@ -94,7 +94,11 @@ export function AdsHeader({
                                 >
                                     <IconLayoutGrid
                                         size={16}
-                                        color={gridView ? "var(--mantine-color-blue-6)" : "var(--mantine-color-gray-6)"}
+                                        color={
+                                            gridView
+                                                ? "var(--mantine-color-blue-6)"
+                                                : "var(--mantine-color-gray-6)"
+                                        }
                                     />
                                 </div>
                             ),
@@ -112,7 +116,11 @@ export function AdsHeader({
                                 >
                                     <IconLayoutList
                                         size={16}
-                                        color={!gridView ? "var(--mantine-color-blue-6)" : "var(--mantine-color-gray-6)"}
+                                        color={
+                                            !gridView
+                                                ? "var(--mantine-color-blue-6)"
+                                                : "var(--mantine-color-gray-6)"
+                                        }
                                     />
                                 </div>
                             ),

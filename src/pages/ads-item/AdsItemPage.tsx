@@ -155,7 +155,8 @@ export default function AdViewPage() {
                         {ad.needsRevision && missingFields.length > 0 && (
                             <Box
                                 style={{
-                                    backgroundColor: "var(--mantine-color-yellow-1)",
+                                    backgroundColor:
+                                        "var(--mantine-color-yellow-1)",
                                     padding: "20px",
                                     borderRadius: "12px",
                                     display: "flex",

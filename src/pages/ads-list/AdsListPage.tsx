@@ -15,7 +15,15 @@ import { AdsList } from "../../widgets/ads-list/AdsList";
 import { useAdsListStore } from "../../entities/ad/adsListStore";
 
 export default function AdsListPage() {
-    const { ads, total, loading, filters, updateFilters, updatePage, fetchAds } = useAdsListStore();
+    const {
+        ads,
+        total,
+        loading,
+        filters,
+        updateFilters,
+        updatePage,
+        fetchAds,
+    } = useAdsListStore();
     const [localSearch, setLocalSearch] = useState(filters.search);
 
     useEffect(() => {
@@ -36,9 +44,7 @@ export default function AdsListPage() {
                 totalItems={total}
                 sortColumn={filters.sortColumn}
                 sortDirection={filters.sortDirection}
-                setSortColumn={(value) =>
-                    updateFilters({ sortColumn: value })
-                }
+                setSortColumn={(value) => updateFilters({ sortColumn: value })}
                 setSortDirection={(value) =>
                     updateFilters({ sortDirection: value })
                 }
@@ -65,10 +71,7 @@ export default function AdsListPage() {
                         </Center>
                     ) : (
                         <>
-                            <AdsList
-                                ads={ads}
-                                gridView={filters.gridView}
-                            />
+                            <AdsList ads={ads} gridView={filters.gridView} />
 
                             <Group justify="center" mt="md">
                                 <Pagination.Root
@@ -78,16 +81,15 @@ export default function AdsListPage() {
                                     getItemProps={(pageNumber) => ({
                                         style: {
                                             borderRadius: "8px",
-                                            backgroundColor: "var(--mantine-color-gray-0)",
+                                            backgroundColor:
+                                                "var(--mantine-color-gray-0)",
                                             border: `1px solid ${pageNumber === filters.page ? "var(--mantine-color-blue-6)" : "var(--mantine-color-gray-2)"}`,
                                             color:
-                                                pageNumber ===
-                                                filters.page
+                                                pageNumber === filters.page
                                                     ? "var(--mantine-color-blue-6)"
                                                     : "var(--mantine-color-gray-7)",
                                             fontWeight:
-                                                pageNumber ===
-                                                filters.page
+                                                pageNumber === filters.page
                                                     ? 600
                                                     : 400,
                                         },
@@ -97,7 +99,8 @@ export default function AdsListPage() {
                                         <Pagination.Previous
                                             style={{
                                                 borderRadius: "8px",
-                                                backgroundColor: "var(--mantine-color-gray-0)",
+                                                backgroundColor:
+                                                    "var(--mantine-color-gray-0)",
                                                 border: "1px solid var(--mantine-color-gray-2)",
                                                 color:
                                                     filters.page === 1
@@ -119,7 +122,8 @@ export default function AdsListPage() {
                                         <Pagination.Next
                                             style={{
                                                 borderRadius: "8px",
-                                                backgroundColor: "var(--mantine-color-gray-0)",
+                                                backgroundColor:
+                                                    "var(--mantine-color-gray-0)",
                                                 border: "1px solid var(--mantine-color-gray-2)",
                                                 color:
                                                     filters.page ===

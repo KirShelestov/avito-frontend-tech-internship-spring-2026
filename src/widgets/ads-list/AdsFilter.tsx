@@ -34,11 +34,7 @@ export function AdsFilters({
 
     return (
         <Stack gap="sm">
-            <Card
-                radius="lg"
-                p="md"
-                withBorder
-            >
+            <Card radius="lg" p="md" withBorder>
                 <Stack gap="md">
                     <Text fw={600} size="sm">
                         Фильтры

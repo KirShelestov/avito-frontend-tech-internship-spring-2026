@@ -1,65 +1,74 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import dotenv from "dotenv";
-
+import crypto from "crypto"; 
 dotenv.config();
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const fastify = Fastify({ logger: true });
 
 await fastify.register(cors, { origin: true });
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+async function getAccessToken() {
+  const response = await fetch("https://ngw.devices.sberbank.ru:9443/api/v2/oauth", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Accept": "application/json",
+      "RqUID": crypto.randomUUID(),
+      "Authorization": process.env.SBER_AUTH_KEY!,
+    },
+    body: "scope=GIGACHAT_API_PERS",
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(JSON.stringify(data));
+  }
+
+  return data.access_token;
+}
 
 fastify.post("/grok", async (request, reply) => {
   const { prompt } = request.body as { prompt?: string };
   if (!prompt) return reply.status(400).send({ error: "Prompt is required" });
 
   try {
-const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${GEMINI_API_KEY}`;   
+    const token = await getAccessToken();
 
-    const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-        temperature: 0.85,
-        maxOutputTokens: 300,
-        topP: 0.8,
-        
-        },
-        safetySettings: [
-        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
-        ],
-        
-    })
+    const response = await fetch("https://gigachat.devices.sberbank.ru/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        model: "GigaChat",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+        max_tokens: 300,
+      }),
     });
-
 
     const data: any = await response.json();
 
-    console.log("--- ПОЛНЫЙ ОТВЕТ ОТ GOOGLE ---");
-console.log(JSON.stringify(data, null, 2)); 
-console.log("--- КОНЕЦ ОТВЕТА ---");
     if (!response.ok) {
       return reply.status(response.status).send({
-        error: "Google API Error",
-        details: data.error?.message || data
+        error: "GigaChat API Error",
+        details: data,
       });
     }
 
-    const resultText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    return reply.send({ result: resultText || "Нейросеть не выдала ответ." });
+    const resultText = data?.choices?.[0]?.message?.content;
+
+    return reply.send({ result: resultText || "Сбер не ответил 😢" });
 
   } catch (err) {
     fastify.log.error(err);
-    return reply.status(502).send({ 
-      error: "Ошибка сети/VPN", 
-      details: String(err) 
+    return reply.status(502).send({
+      error: "Ошибка сети/серверная",
+      details: String(err),
     });
   }
 });
@@ -74,5 +83,5 @@ fastify.listen({ port, host: "0.0.0.0" }, (err, address) => {
     fastify.log.error(err);
     process.exit(1);
   }
-  console.log(`\n🚀 ГОТОВО! Сервер слушает на: ${address}`);
+  console.log(`\n🚀 Сервер слушает на: ${address}`);
 });

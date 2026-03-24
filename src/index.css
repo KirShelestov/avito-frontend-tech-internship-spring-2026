@@ -1,6 +1,9 @@
 body {
     background-color: #f7f5f8;
 }
+body.ads-edit-page {
+    background-color: #fff;
+}
 html {
     overflow-y: scroll;
 }

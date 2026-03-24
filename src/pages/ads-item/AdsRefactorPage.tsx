@@ -15,7 +15,13 @@ import {
     Center,
     Alert,
 } from "@mantine/core";
-import { IconBulb, IconX, IconAlertCircle } from "@tabler/icons-react";
+import {
+    IconBulb,
+    IconCircleXFilled,
+    IconAlertCircle,
+    IconChevronUp,
+    IconChevronDown,
+} from "@tabler/icons-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getItemById, updateItem } from "../../entities/ad/api/adApi";
@@ -66,9 +72,17 @@ const CONDITION_OPTIONS = [
 ];
 
 export default function AdsRefactorPage() {
+    useEffect(() => {
+        document.body.classList.add("ads-edit-page");
+
+        return () => {
+            document.body.classList.remove("ads-edit-page");
+        };
+    }, []);
     const { id } = useParams();
     const navigate = useNavigate();
     const [ad, setAd] = useState<AdItem | null>(null);
+    console.log("Ad in edit", ad);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [aiDescriptionLoading, setAiDescriptionLoading] = useState(false);
@@ -76,8 +90,12 @@ export default function AdsRefactorPage() {
 
     const [aiDescriptionResult, setAiDescriptionResult] = useState<string>("");
     const [aiPriceResult, setAiPriceResult] = useState<string>("");
-    const [aiDescriptionMessage, setAiDescriptionMessage] = useState<string>("");
+    const [aiDescriptionMessage, setAiDescriptionMessage] =
+        useState<string>("");
     const [aiPriceMessage, setAiPriceMessage] = useState<string>("");
+    const [openedCondition, setOpenedCondition] = useState(false);
+    const [openedType, setOpenedType] = useState(false);
+    const [openedCategory, setOpenedCategory] = useState(false);
 
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>({
@@ -87,6 +105,13 @@ export default function AdsRefactorPage() {
         description: "",
         params: {},
     });
+
+    useEffect(() => {
+        document.body.classList.add("edit-page");
+        return () => {
+            document.body.classList.remove("edit-page");
+        };
+    }, []);
 
     useEffect(() => {
         if (!id) {
@@ -152,35 +177,6 @@ export default function AdsRefactorPage() {
             return;
         }
 
-        if (formData.category === "auto") {
-            if (!formData.params.brand?.trim()) {
-                setError("Бренд обязателен для авто");
-                return;
-            }
-            if (!formData.params.model?.trim()) {
-                setError("Модель обязательна для авто");
-                return;
-            }
-        } else if (formData.category === "real_estate") {
-            if (!formData.params.type) {
-                setError("Тип недвижимости обязателен");
-                return;
-            }
-            if (!formData.params.address?.trim()) {
-                setError("Адрес обязателен для недвижимости");
-                return;
-            }
-        } else if (formData.category === "electronics") {
-            if (!formData.params.type) {
-                setError("Тип электроники обязателен");
-                return;
-            }
-            if (!formData.params.brand?.trim()) {
-                setError("Бренд обязателен для электроники");
-                return;
-            }
-        }
-
         setError(null);
         setSaving(true);
         try {
@@ -244,7 +240,9 @@ export default function AdsRefactorPage() {
             const result = await callGemini(prompt);
             if (result.trim()) {
                 setAiDescriptionResult(result.trim());
-                setAiDescriptionMessage("AI сгенерировал описание — нажмите Применить");
+                setAiDescriptionMessage(
+                    "AI сгенерировал описание — нажмите Применить",
+                );
             } else {
                 setAiDescriptionResult("");
                 setAiDescriptionMessage("Gemini вернул пустой ответ.");
@@ -300,7 +298,9 @@ export default function AdsRefactorPage() {
             setAiPriceMessage(`Цена применена: ${maybePrice}`);
             setAiPriceResult("");
         } else {
-            setAiPriceMessage("Распарсить цену не удалось. Проверьте текст в ответе AI.");
+            setAiPriceMessage(
+                "Распарсить цену не удалось. Проверьте текст в ответе AI.",
+            );
         }
     };
 
@@ -332,20 +332,37 @@ export default function AdsRefactorPage() {
             return (
                 <Stack gap="xs">
                     <TextInput
+                        radius={8}
                         label="Бренд"
                         value={formData.params.brand || ""}
                         onChange={(e) => updateParams("brand", e.target.value)}
                         w="100%"
-                        rightSection={<IconX size={14} color="gray" />}
+                        rightSection={
+                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                        }
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <TextInput
+                        radius={8}
                         label="Модель"
                         value={formData.params.model || ""}
                         onChange={(e) => updateParams("model", e.target.value)}
                         w="100%"
-                        rightSection={<IconX size={14} color="gray" />}
+                        rightSection={
+                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                        }
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <NumberInput
+                        radius={8}
                         label="Год выпуска"
                         value={formData.params.yearOfManufacture || ""}
                         onChange={(value) =>
@@ -354,6 +371,7 @@ export default function AdsRefactorPage() {
                         w="100%"
                     />
                     <Select
+                        radius={8}
                         label="Коробка передач"
                         data={TRANSMISSION_OPTIONS}
                         value={formData.params.transmission || ""}
@@ -361,18 +379,30 @@ export default function AdsRefactorPage() {
                             updateParams("transmission", value)
                         }
                         w="100%"
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <NumberInput
+                        radius={8}
                         label="Пробег"
                         value={formData.params.mileage || ""}
                         onChange={(value) => updateParams("mileage", value)}
                         w="100%"
                     />
                     <NumberInput
+                        radius={8}
                         label="Мощность двигателя"
                         value={formData.params.enginePower || ""}
                         onChange={(value) => updateParams("enginePower", value)}
                         w="100%"
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                 </Stack>
             );
@@ -382,32 +412,58 @@ export default function AdsRefactorPage() {
             return (
                 <Stack gap="xs">
                     <Select
+                        radius={8}
                         label="Тип"
                         data={REAL_ESTATE_TYPE_OPTIONS}
                         value={formData.params.type || ""}
                         onChange={(value) => updateParams("type", value)}
                         w="100%"
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <TextInput
+                        radius={8}
                         label="Адрес"
                         value={formData.params.address || ""}
                         onChange={(e) =>
                             updateParams("address", e.target.value)
                         }
                         w="100%"
-                        rightSection={<IconX size={14} color="gray" />}
+                        rightSection={
+                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                        }
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <NumberInput
+                        radius={8}
                         label="Площадь"
                         value={formData.params.area || ""}
                         onChange={(value) => updateParams("area", value)}
                         w="100%"
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <NumberInput
+                        radius={8}
                         label="Этаж"
                         value={formData.params.floor || ""}
                         onChange={(value) => updateParams("floor", value)}
                         w="100%"
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                 </Stack>
             );
@@ -417,41 +473,92 @@ export default function AdsRefactorPage() {
             return (
                 <Stack gap="xs">
                     <Select
+                        radius={8}
                         label="Тип"
                         data={ELECTRONICS_TYPE_OPTIONS}
                         value={formData.params.type || ""}
                         onChange={(value) => updateParams("type", value)}
                         w="100%"
+                        onDropdownOpen={() => setOpenedType(true)}
+                        onDropdownClose={() => setOpenedType(false)}
+                        rightSection={
+                            openedType ? (
+                                <IconChevronUp size={16} />
+                            ) : (
+                                <IconChevronDown size={16} />
+                            )
+                        }
+                        rightSectionPointerEvents="none"
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <TextInput
+                        radius={8}
                         label="Бренд"
                         value={formData.params.brand || ""}
                         onChange={(e) => updateParams("brand", e.target.value)}
                         w="100%"
-                        rightSection={<IconX size={14} color="gray" />}
+                        rightSection={
+                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                        }
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <TextInput
+                        radius={8}
                         label="Модель"
                         value={formData.params.model || ""}
                         onChange={(e) => updateParams("model", e.target.value)}
                         w="100%"
-                        rightSection={<IconX size={14} color="gray" />}
+                        rightSection={
+                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                        }
+                    />
+                    <TextInput
+                        radius={8}
+                        label="Цвет"
+                        value={formData.params.color || ""}
+                        onChange={(e) => updateParams("color", e.target.value)}
+                        w="100%"
+                        styles={orangeInputStyles}
+                        rightSection={
+                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                        }
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <Select
+                        radius={8}
                         label="Состояние"
                         data={CONDITION_OPTIONS}
                         value={formData.params.condition || ""}
                         onChange={(value) => updateParams("condition", value)}
                         w="100%"
                         styles={orangeInputStyles}
-                    />
-                    <TextInput
-                        label="Цвет"
-                        value={formData.params.color || ""}
-                        onChange={(e) => updateParams("color", e.target.value)}
-                        w="100%"
-                        styles={orangeInputStyles}
-                        rightSection={<IconX size={14} color="gray" />}
+                        onDropdownOpen={() => setOpenedCondition(true)}
+                        onDropdownClose={() => setOpenedCondition(false)}
+                        rightSection={
+                            openedCondition ? (
+                                <IconChevronUp size={16} />
+                            ) : (
+                                <IconChevronDown size={16} />
+                            )
+                        }
+                        rightSectionPointerEvents="none"
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                 </Stack>
             );
@@ -479,6 +586,12 @@ export default function AdsRefactorPage() {
 
             <Stack maw={400} gap="md">
                 <Select
+                    radius={8}
+                    styles={{
+                        input: {
+                            border: "2px solid #D9D9D9",
+                        },
+                    }}
                     label="Категория"
                     placeholder="Выберите категорию"
                     data={CATEGORY_OPTIONS}
@@ -486,32 +599,52 @@ export default function AdsRefactorPage() {
                     onChange={(value) => updateFormData("category", value)}
                     rightSectionPointerEvents="none"
                     w="100%"
+                    onDropdownOpen={() => setOpenedCategory(true)}
+                    onDropdownClose={() => setOpenedCategory(false)}
+                    rightSection={
+                        openedCategory ? (
+                            <IconChevronUp size={16} />
+                        ) : (
+                            <IconChevronDown size={16} />
+                        )
+                    }
                 />
 
                 <TextInput
+                    radius={8}
                     label="Название"
                     placeholder="Например, MacBook Pro 16"
                     value={formData.title}
                     onChange={(e) => updateFormData("title", e.target.value)}
                     withAsterisk
-                    rightSection={<IconX size={14} color="gray" />}
-                    styles={{ input: { borderColor: "#339AF0" } }}
+                    rightSection={
+                        <IconCircleXFilled size={14} color="#D9D9D9" />
+                    }
                     w="100%"
+                    styles={{
+                        input: {
+                            border: "2px solid #D9D9D9",
+                        },
+                    }}
                 />
             </Stack>
             <Divider my="sm" labelPosition="center" variant="dotted" />
 
             <Group style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
                 <NumberInput
+                    radius={8}
                     label="Цена"
                     placeholder="64000"
                     value={formData.price}
                     onChange={(value) => updateFormData("price", value)}
                     withAsterisk
-                    rightSection={<IconX size={14} color="gray" />}
+                    rightSection={
+                        <IconCircleXFilled size={14} color="#D9D9D9" />
+                    }
                     style={{ flex: 1, maxWidth: 400 }}
                     styles={{
-                        input: { width: "100%" },
+                        input: { width: "100%", border: "2px solid #D9D9D9" },
+
                         wrapper: { flex: 1 },
                     }}
                 />
@@ -523,7 +656,9 @@ export default function AdsRefactorPage() {
                 >
                     <Box
                         style={{
-                            backgroundColor: aiPriceLoading ? "#EDF2FF" : "#FFF4E6",
+                            backgroundColor: aiPriceLoading
+                                ? "#EDF2FF"
+                                : "#FFF4E6",
                             padding: "8px 12px",
                             borderRadius: "6px",
                             display: "flex",
@@ -535,7 +670,9 @@ export default function AdsRefactorPage() {
                     >
                         <IconBulb size={14} color="#FD7E14" />
                         <Text size="xs" c="#FD7E14" fw={500}>
-                            {aiPriceLoading ? "Запрос цены..." : "Узнать рыночную цену"}
+                            {aiPriceLoading
+                                ? "Запрос цены..."
+                                : "Узнать рыночную цену"}
                         </Text>
                     </Box>
                 </AiPopover>
@@ -552,17 +689,23 @@ export default function AdsRefactorPage() {
 
             <Divider my="sm" labelPosition="center" variant="dotted" />
             <Stack>
-                <Stack gap={4}>
+                <Stack gap={8}>
                     <Text size="sm" fw={500}>
                         Описание
                     </Text>
                     <Textarea
+                        radius={12}
                         placeholder="Опишите ваш товар..."
                         minRows={4}
                         value={formData.description}
                         onChange={(e) =>
                             updateFormData("description", e.target.value)
                         }
+                        styles={{
+                            input: {
+                                border: "2px solid #D9D9D9",
+                            },
+                        }}
                     />
                     <Group justify="space-between">
                         <AiPopover
@@ -620,7 +763,7 @@ export default function AdsRefactorPage() {
                         size="md"
                         px="xl"
                         variant="filled"
-                        color="gray.3"
+                        color="#D9D9D9.3"
                         c="black"
                         onClick={handleCancel}
                     >

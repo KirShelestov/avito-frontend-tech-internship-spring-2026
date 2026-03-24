@@ -82,7 +82,7 @@ export default function AdsRefactorPage() {
 
     const onInputChange = (
         field: keyof FormData,
-        value: string | number | Record<string, unknown>,
+        value: string | number | Record<string, string | number | undefined>,
     ) => {
         updateField(field, value);
     };
@@ -114,7 +114,7 @@ export default function AdsRefactorPage() {
                     <TextInput
                         radius={8}
                         label="Бренд"
-                        value={formData.params.brand || ""}
+                        value={String(formData.params.brand || "")}
                         onChange={(e) => onParamChange("brand", e.target.value)}
                         w="100%"
                         rightSection={
@@ -125,7 +125,7 @@ export default function AdsRefactorPage() {
                     <TextInput
                         radius={8}
                         label="Модель"
-                        value={formData.params.model || ""}
+                        value={String(formData.params.model || "")}
                         onChange={(e) => onParamChange("model", e.target.value)}
                         w="100%"
                         rightSection={
@@ -195,7 +195,7 @@ export default function AdsRefactorPage() {
                     <TextInput
                         radius={8}
                         label="Адрес"
-                        value={formData.params.address || ""}
+                        value={String(formData.params.address || "")}
                         onChange={(e) =>
                             onParamChange("address", e.target.value)
                         }
@@ -256,7 +256,7 @@ export default function AdsRefactorPage() {
                     <TextInput
                         radius={8}
                         label="Бренд"
-                        value={formData.params.brand || ""}
+                        value={String(formData.params.brand || "")}
                         onChange={(e) => onParamChange("brand", e.target.value)}
                         w="100%"
                         rightSection={
@@ -267,7 +267,7 @@ export default function AdsRefactorPage() {
                     <TextInput
                         radius={8}
                         label="Модель"
-                        value={formData.params.model || ""}
+                        value={String(formData.params.model || "")}
                         onChange={(e) => onParamChange("model", e.target.value)}
                         w="100%"
                         rightSection={
@@ -278,7 +278,7 @@ export default function AdsRefactorPage() {
                     <TextInput
                         radius={8}
                         label="Цвет"
-                        value={formData.params.color || ""}
+                        value={String(formData.params.color || "")}
                         onChange={(e) => onParamChange("color", e.target.value)}
                         w="100%"
                         rightSection={
@@ -290,7 +290,7 @@ export default function AdsRefactorPage() {
                         radius={8}
                         label="Состояние"
                         data={CONDITION_OPTIONS}
-                        value={formData.params.condition || ""}
+                        value={String(formData.params.condition || "")}
                         onChange={(value) =>
                             value != null && onParamChange("condition", value)
                         }

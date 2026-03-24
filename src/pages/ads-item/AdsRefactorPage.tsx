@@ -26,6 +26,7 @@ import {
     buildMarketPricePrompt,
     parsePriceFromText,
 } from "../../entities/ad/utils/llmAdUtils";
+import { AiPopover } from "../../widgets/ads-item/AiPopeover";
 import type { AdItem } from "../../entities/ad/types";
 
 type FormData = {
@@ -70,8 +71,14 @@ export default function AdsRefactorPage() {
     const [ad, setAd] = useState<AdItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [aiLoading, setAiLoading] = useState(false);
-    const [aiMessage, setAiMessage] = useState<string>("");
+    const [aiDescriptionLoading, setAiDescriptionLoading] = useState(false);
+    const [aiPriceLoading, setAiPriceLoading] = useState(false);
+
+    const [aiDescriptionResult, setAiDescriptionResult] = useState<string>("");
+    const [aiPriceResult, setAiPriceResult] = useState<string>("");
+    const [aiDescriptionMessage, setAiDescriptionMessage] = useState<string>("");
+    const [aiPriceMessage, setAiPriceMessage] = useState<string>("");
+
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>({
         category: "",
@@ -226,8 +233,9 @@ export default function AdsRefactorPage() {
         }
 
         setError(null);
-        setAiLoading(true);
-        setAiMessage("");
+        setAiDescriptionLoading(true);
+        setAiDescriptionMessage("");
+        setAiPriceMessage("");
 
         const context = buildAdContext(formData);
         const prompt = buildImproveDescriptionPrompt(context);
@@ -235,28 +243,26 @@ export default function AdsRefactorPage() {
         try {
             const result = await callGemini(prompt);
             if (result.trim()) {
-                setFormData((prev) => ({
-                    ...prev,
-                    description: result.trim(),
-                }));
-                setAiMessage(
-                    "Описание улучшено Gemini (можно дополнительно отредактировать).",
-                );
+                setAiDescriptionResult(result.trim());
+                setAiDescriptionMessage("AI сгенерировал описание — нажмите Применить");
             } else {
-                setAiMessage("Gemini вернул пустой ответ.");
+                setAiDescriptionResult("");
+                setAiDescriptionMessage("Gemini вернул пустой ответ.");
             }
         } catch (err) {
             console.error("AI Improve error", err);
+            setAiDescriptionResult("");
             setError(`Не удалось улучшить описание: ${err}`);
         } finally {
-            setAiLoading(false);
+            setAiDescriptionLoading(false);
         }
     };
 
     const handleMarketPrice = async () => {
         setError(null);
-        setAiLoading(true);
-        setAiMessage("");
+        setAiPriceLoading(true);
+        setAiPriceMessage("");
+        setAiDescriptionMessage("");
 
         const context = buildAdContext(formData);
         const prompt = buildMarketPricePrompt(context);
@@ -264,23 +270,37 @@ export default function AdsRefactorPage() {
         try {
             const result = await callGemini(prompt);
             if (result.trim()) {
-                const price = parsePriceFromText(result);
-                if (price) {
-                    setFormData((prev) => ({ ...prev, price }));
-                    setAiMessage(
-                        `Gemini оценка: ${result.trim()} (авто-установлено ${price}).`,
-                    );
-                } else {
-                    setAiMessage(`Gemini оценка: ${result.trim()}`);
-                }
+                setAiPriceResult(result.trim());
+                setAiPriceMessage("AI вернул цену — нажмите Применить");
             } else {
-                setAiMessage("Gemini не вернул информацию по цене.");
+                setAiPriceResult("");
+                setAiPriceMessage("Gemini не вернул информацию по цене.");
             }
         } catch (err) {
             console.error("AI Price error", err);
+            setAiPriceResult("");
             setError(`Не удалось получить цену: ${err}`);
         } finally {
-            setAiLoading(false);
+            setAiPriceLoading(false);
+        }
+    };
+
+    const handleApplyDescription = () => {
+        if (!aiDescriptionResult) return;
+        setFormData((prev) => ({ ...prev, description: aiDescriptionResult }));
+        setAiDescriptionMessage("Описание применено.");
+        setAiDescriptionResult("");
+    };
+
+    const handleApplyPrice = () => {
+        if (!aiPriceResult) return;
+        const maybePrice = parsePriceFromText(aiPriceResult);
+        if (maybePrice) {
+            setFormData((prev) => ({ ...prev, price: maybePrice }));
+            setAiPriceMessage(`Цена применена: ${maybePrice}`);
+            setAiPriceResult("");
+        } else {
+            setAiPriceMessage("Распарсить цену не удалось. Проверьте текст в ответе AI.");
         }
     };
 
@@ -495,24 +515,30 @@ export default function AdsRefactorPage() {
                         wrapper: { flex: 1 },
                     }}
                 />
-                <Box
-                    onClick={handleMarketPrice}
-                    style={{
-                        backgroundColor: aiLoading ? "#EDF2FF" : "#FFF4E6",
-                        padding: "8px 12px",
-                        borderRadius: "6px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        cursor: "pointer",
-                        whiteSpace: "nowrap",
-                    }}
+                <AiPopover
+                    onRequest={handleMarketPrice}
+                    loading={aiPriceLoading}
+                    message={aiPriceMessage}
+                    onApply={handleApplyPrice}
                 >
-                    <IconBulb size={14} color="#FD7E14" />
-                    <Text size="xs" c="#FD7E14" fw={500}>
-                        {aiLoading ? "Запрос цены..." : "Узнать рыночную цену"}
-                    </Text>
-                </Box>
+                    <Box
+                        style={{
+                            backgroundColor: aiPriceLoading ? "#EDF2FF" : "#FFF4E6",
+                            padding: "8px 12px",
+                            borderRadius: "6px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            cursor: "pointer",
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        <IconBulb size={14} color="#FD7E14" />
+                        <Text size="xs" c="#FD7E14" fw={500}>
+                            {aiPriceLoading ? "Запрос цены..." : "Узнать рыночную цену"}
+                        </Text>
+                    </Box>
+                </AiPopover>
             </Group>
 
             <Divider my="sm" labelPosition="center" variant="dotted" />
@@ -539,35 +565,41 @@ export default function AdsRefactorPage() {
                         }
                     />
                     <Group justify="space-between">
-                        <Box
-                            onClick={handleImproveDescription}
-                            style={{
-                                backgroundColor: aiLoading
-                                    ? "#EDF2FF"
-                                    : "#FFF4E6",
-                                padding: "6px 10px",
-                                borderRadius: "6px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "6px",
-                                width: "fit-content",
-                                cursor: "pointer",
-                            }}
+                        <AiPopover
+                            onRequest={handleImproveDescription}
+                            loading={aiDescriptionLoading}
+                            message={aiDescriptionMessage}
+                            onApply={handleApplyDescription}
                         >
-                            <IconBulb size={14} color="#FD7E14" />
-                            <Text size="xs" c="#FD7E14" fw={500}>
-                                {aiLoading
-                                    ? "Генерация описания..."
-                                    : "Улучшить описание"}
-                            </Text>
-                        </Box>
+                            <Box
+                                style={{
+                                    backgroundColor: aiDescriptionLoading
+                                        ? "#EDF2FF"
+                                        : "#FFF4E6",
+                                    padding: "6px 10px",
+                                    borderRadius: "6px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                    width: "fit-content",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                <IconBulb size={14} color="#FD7E14" />
+                                <Text size="xs" c="#FD7E14" fw={500}>
+                                    {aiDescriptionLoading
+                                        ? "Генерация описания..."
+                                        : "Улучшить описание"}
+                                </Text>
+                            </Box>
+                        </AiPopover>
                         <Text size="xs" c="dimmed">
                             {formData.description.length} / 1000
                         </Text>
                     </Group>
-                    {aiMessage && (
+                    {aiDescriptionMessage && (
                         <Text size="xs" c="teal" mt="xs">
-                            {aiMessage}
+                            {aiDescriptionMessage}
                         </Text>
                     )}
                 </Stack>

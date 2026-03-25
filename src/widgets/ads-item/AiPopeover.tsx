@@ -55,7 +55,7 @@ export function AiPopover({
             <Popover.Dropdown>
                 <Stack gap="md">
                     <Box>
-                        <Text fw={700} size="sm" c="blue" mb="xs">
+                        <Text fw={700} size="sm" c="black" mb="xs">
                             Ответ AI:
                         </Text>
                         <Divider />

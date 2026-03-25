@@ -7,10 +7,13 @@ import {
 } from "../../entities/ad/utils/llmAdUtils";
 import type { FormData } from "./adsEditTypes";
 
-export const improveDescription = async (formData: FormData) => {
+export const improveDescription = async (
+    formData: FormData,
+    signal?: AbortSignal
+) => {
     const context = buildAdContext(formData);
     const prompt = buildImproveDescriptionPrompt(context);
-    const text = await callGemini(prompt);
+    const text = await callGemini(prompt, signal);
     const result = text?.trim() || "";
 
     return {
@@ -21,10 +24,10 @@ export const improveDescription = async (formData: FormData) => {
     };
 };
 
-export const marketPrice = async (formData: FormData) => {
+export const marketPrice = async (formData: FormData, signal?: AbortSignal) => {
     const context = buildAdContext(formData);
     const prompt = buildMarketPricePrompt(context);
-    const text = await callGemini(prompt);
+    const text = await callGemini(prompt, signal);
     const result = text?.trim() || "";
 
     return {

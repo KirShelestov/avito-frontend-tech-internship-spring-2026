@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getItemById, updateItem } from "../../entities/ad/api/adApi";
 import { improveDescription, marketPrice, applyPriceFromText } from "./adsEditService";
@@ -8,6 +8,7 @@ import { useAdsEditStore } from "./adsEditStore";
 export const useAdsEdit = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const {
     ad,
@@ -78,6 +79,10 @@ export const useAdsEdit = () => {
     document.body.classList.add("ads-edit-page");
     return () => {
       document.body.classList.remove("ads-edit-page");
+      // Отмена всех активных запросов при размонтировании компонента
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
     };
   }, []);
 
@@ -120,6 +125,10 @@ export const useAdsEdit = () => {
   };
 
   const handleCancel = () => {
+    // Отмена всех активных запросов AI при отмене
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     navigate(`/ads/${id}`);
   };
 
@@ -133,11 +142,22 @@ export const useAdsEdit = () => {
     setAiDescriptionLoading(true);
     setAiPriceMessage("");
 
+    // Создаём новый AbortController для этого запроса
+    abortControllerRef.current = new AbortController();
+
     try {
-      const { result, message } = await improveDescription(formData);
+      const { result, message } = await improveDescription(
+        formData,
+        abortControllerRef.current.signal
+      );
       setAiDescriptionResult(result);
       setAiDescriptionMessage(result);
-    } catch (err) {
+    } catch (err: any) {
+      // Игнорируем ошибку отмены
+      if (err.name === "AbortError") {
+        console.log("Запрос описания отменён");
+        return;
+      }
       console.error("AI Improve error", err);
       setAiDescriptionResult("");
       setError(`Не удалось улучшить описание: ${err}`);
@@ -151,11 +171,22 @@ export const useAdsEdit = () => {
     setAiPriceLoading(true);
     setAiDescriptionMessage("");
 
+    // Создаём новый AbortController для этого запроса
+    abortControllerRef.current = new AbortController();
+
     try {
-      const { result, message } = await marketPrice(formData);
+      const { result, message } = await marketPrice(
+        formData,
+        abortControllerRef.current.signal
+      );
       setAiPriceResult(result);
       setAiPriceMessage(result);
-    } catch (err) {
+    } catch (err: any) {
+      // Игнорируем ошибку отмены
+      if (err.name === "AbortError") {
+        console.log("Запрос цены отменён");
+        return;
+      }
       console.error("AI Price error", err);
       setAiPriceResult("");
       setError(`Не удалось получить цену: ${err}`);

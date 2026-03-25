@@ -10,7 +10,7 @@ export const useAdsEdit = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
-  const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedDataRef = useRef<string | null>(null);
 
   const {
@@ -46,7 +46,6 @@ export const useAdsEdit = () => {
     setHasDraft,
   } = useAdsEditStore();
 
-  // Инициализация: попытка загрузить черновик из localStorage перед загрузкой с API
   useEffect(() => {
     if (!id) {
       setLoading(false);
@@ -112,7 +111,7 @@ export const useAdsEdit = () => {
   }, [formData, id]);
 
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    const handleBeforeUnload = () => {
       if (id && formData) {
         saveDraft(id, formData);
       }
@@ -235,14 +234,14 @@ export const useAdsEdit = () => {
     abortControllerRef.current = new AbortController();
 
     try {
-      const { result, message } = await improveDescription(
+      const { result } = await improveDescription(
         formData,
         abortControllerRef.current.signal
       );
       setAiDescriptionResult(result);
       setAiDescriptionMessage(result);
-    } catch (err: any) {
-      if (err.name === "AbortError") {
+    } catch (err: unknown) {
+      if (err === "AbortError") {
         console.log("Запрос описания отменён");
         return;
       }
@@ -259,18 +258,17 @@ export const useAdsEdit = () => {
     setAiPriceLoading(true);
     setAiDescriptionMessage("");
 
-    // Создаём новый AbortController для этого запроса
     abortControllerRef.current = new AbortController();
 
     try {
-      const { result, message } = await marketPrice(
+      const { result } = await marketPrice(
         formData,
         abortControllerRef.current.signal
       );
       setAiPriceResult(result);
       setAiPriceMessage(result);
-    } catch (err: any) {
-      if (err.name === "AbortError") {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") {
         console.log("Запрос цены отменён");
         return;
       }
@@ -329,16 +327,21 @@ export const useAdsEdit = () => {
         timestamp: new Date(),
       };
       addChatMessage(assistantMessage);
-    } catch (err: any) {
-      if (err.name === "AbortError") {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") {
         console.log("Запрос чата отменён");
         return;
       }
       console.error("Chat error", err);
+      if (err instanceof Error) {
+        setError(`Ошибка чата: ${err.message}`);
+      } else {
+        setError("Неизвестная ошибка чата");
+      }
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `Ошибка: ${err.message || "Не удалось получить ответ"}`,
+        content: `Ошибка: ${err || "Не удалось получить ответ"}`,
         timestamp: new Date(),
       };
       addChatMessage(errorMessage);

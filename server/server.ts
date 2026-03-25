@@ -154,7 +154,7 @@ fastify.put<ItemUpdateRequest>('/items/:id', (request, reply) => {
   try {
     const parsedData = ItemUpdateInSchema.parse({
       category: ITEMS[itemIndex].category,
-      ...(request.body as {}),
+      ...(request.body as Record<string, unknown>),
     });
 
     ITEMS[itemIndex] = {
@@ -175,9 +175,9 @@ fastify.put<ItemUpdateRequest>('/items/:id', (request, reply) => {
   }
 });
 
-const port = Number(process.env.port) ?? 8080;
+const port = process.env.port ? Number(process.env.port) : 8080;
 
-fastify.listen({ port }, function (err, _address) {
+fastify.listen({ port }, function (err) {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

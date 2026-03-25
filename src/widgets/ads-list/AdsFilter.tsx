@@ -11,15 +11,24 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 
+type Category = "auto" | "electronics" | "real_estate";
+interface AdsFiltersProps {
+    onlyRevision: boolean;
+    setOnlyRevision: (value: boolean) => void;
+
+    categories: Category[];
+    setCategories: (value: Category[]) => void;
+}
+
 export function AdsFilters({
     onlyRevision,
     setOnlyRevision,
     categories,
     setCategories,
-}: any) {
+}: AdsFiltersProps) {
     const [opened, setOpened] = useState(true);
 
-    const handleCategoryChange = (category: string, checked: boolean) => {
+    const handleCategoryChange = (category: Category, checked: boolean) => {
         if (checked) {
             setCategories([...categories, category]);
         } else {

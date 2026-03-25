@@ -217,6 +217,7 @@ npm run test src/pages/ads-item/__tests__/adsEditUtils.test.ts
 ### Storage Details
 
 Each draft stores:
+
 - Form data (category, title, price, description, params)
 - Timestamp of last save
 - Keys format: `ad-draft-{id}` and `ad-draft-{id}-timestamp`

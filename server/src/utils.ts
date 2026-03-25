@@ -6,7 +6,7 @@ import {
 } from './validation.ts';
 
 export const doesItemNeedRevision = (item: Item): boolean =>
-  !Boolean(item.description) ||
+  !item.description ||
   !(() => {
     if (item.category === 'auto')
       return AutoItemParamsSchema.safeParse(item.params).success;

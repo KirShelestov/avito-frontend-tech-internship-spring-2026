@@ -15,15 +15,8 @@ import { AdsList } from "../../widgets/ads-list/AdsList";
 import { useAdsListStore } from "../../entities/ad/adsListStore";
 
 export default function AdsListPage() {
-    const {
-        ads,
-        total,
-        loading,
-        filters,
-        updateFilters,
-        updatePage,
-        fetchAds,
-    } = useAdsListStore();
+    const { ads, total, loading, filters, updateFilters, updatePage } =
+        useAdsListStore();
     const [localSearch, setLocalSearch] = useState(filters.search);
 
     useEffect(() => {

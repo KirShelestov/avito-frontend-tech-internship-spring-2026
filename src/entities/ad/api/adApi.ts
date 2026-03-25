@@ -16,6 +16,6 @@ export const getItemById = (id: number) => {
   return api.get(`/items/${id}`);
 };
 
-export const updateItem = (id: number, data: any) => {
+export const updateItem = (id: number, data: Record<string, unknown>) => {
   return api.put(`/items/${id}`, data);
 };

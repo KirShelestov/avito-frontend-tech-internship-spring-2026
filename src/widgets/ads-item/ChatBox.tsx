@@ -6,7 +6,6 @@ import {
     Group,
     Text,
     ScrollArea,
-    Badge,
     Loader,
     Center,
 } from "@mantine/core";

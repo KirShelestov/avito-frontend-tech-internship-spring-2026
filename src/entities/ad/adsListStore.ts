@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { getItems } from "./api/adApi";
+import type { AdItem } from "./types";
 
 type AdsListFilters = {
     search: string;
@@ -12,11 +13,11 @@ type AdsListFilters = {
 };
 
 type AdsListState = {
-    ads: any[];
+    ads: AdItem[];
     total: number;
     loading: boolean;
     filters: AdsListFilters;
-    setAds: (ads: any[]) => void;
+    setAds: (ads: AdItem[]) => void;
     setTotal: (total: number) => void;
     setLoading: (loading: boolean) => void;
     setFilters: (filters: Partial<AdsListFilters>) => void;
@@ -85,7 +86,7 @@ export const useAdsListStore = create<AdsListState>((set, get) => ({
             });
             let items = res.data.items;
             if (filters.sortColumn === "price") {
-                items = items.sort((a: any, b: any) =>
+                items = items.sort((a: AdItem, b: AdItem) =>
                     filters.sortDirection === "asc" ? a.price - b.price : b.price - a.price,
                 );
             }

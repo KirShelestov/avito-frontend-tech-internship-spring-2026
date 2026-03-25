@@ -3,7 +3,7 @@ type FormData = {
   title: string;
   price: number;
   description: string;
-  params: Record<string, any>;
+  params: Record<string, unknown>;
 };
 
 export const buildAdContext = (formData: FormData) => {

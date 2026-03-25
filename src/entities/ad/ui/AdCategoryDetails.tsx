@@ -1,9 +1,45 @@
 import { Stack, Text } from "@mantine/core";
-import type { AdItem } from "../types";
+
+type AutoParams = {
+    brand?: string;
+    model?: string;
+    yearOfManufacture?: number;
+    transmission?: string;
+    mileage?: number;
+    enginePower?: number;
+};
+
+type RealEstateParams = {
+    type?: string;
+    address?: string;
+    area?: number;
+    floor?: number;
+};
+
+type ElectronicsParams = {
+    type?: string;
+    brand?: string;
+    model?: string;
+    condition?: string;
+    color?: string;
+};
 
 type AdCategoryDetailsProps = {
     ad: AdItem;
 };
+type AdItem =
+    | {
+          category: "auto";
+          params: AutoParams;
+      }
+    | {
+          category: "real_estate";
+          params: RealEstateParams;
+      }
+    | {
+          category: "electronics";
+          params: ElectronicsParams;
+      };
 
 export function AdCategoryDetails({ ad }: AdCategoryDetailsProps) {
     if (ad.category === "auto") {
@@ -14,7 +50,7 @@ export function AdCategoryDetails({ ad }: AdCategoryDetailsProps) {
             transmission,
             mileage,
             enginePower,
-        } = ad.params as any;
+        } = ad.params;
 
         return (
             <Stack gap={4}>
@@ -41,7 +77,7 @@ export function AdCategoryDetails({ ad }: AdCategoryDetailsProps) {
     }
 
     if (ad.category === "real_estate") {
-        const { type, address, area, floor } = ad.params as any;
+        const { type, address, area, floor } = ad.params;
 
         return (
             <Stack gap={4}>
@@ -62,7 +98,7 @@ export function AdCategoryDetails({ ad }: AdCategoryDetailsProps) {
     }
 
     if (ad.category === "electronics") {
-        const { type, brand, model, condition, color } = ad.params as any;
+        const { type, brand, model, condition, color } = ad.params;
 
         return (
             <Stack gap={4}>

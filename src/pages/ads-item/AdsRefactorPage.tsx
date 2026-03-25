@@ -61,7 +61,6 @@ export default function AdsRefactorPage() {
         ad,
         loading,
         saving,
-        error,
         formData,
         aiDescriptionLoading,
         aiPriceLoading,

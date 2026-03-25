@@ -18,6 +18,25 @@ import {
 import { useState } from "react";
 import { ThemeToggle } from "../theme/ThemeToggle";
 
+type SortColumn = "createdAt" | "price" | "title";
+type SortDirection = "asc" | "desc";
+
+interface AdsHeaderProps {
+    search: string;
+    setSearch: (value: string) => void;
+
+    gridView: boolean;
+    setGridView: (value: boolean) => void;
+
+    totalItems: number;
+
+    sortColumn: SortColumn;
+    sortDirection: SortDirection;
+
+    setSortColumn: (value: SortColumn) => void;
+    setSortDirection: (value: SortDirection) => void;
+}
+
 export function AdsHeader({
     search,
     setSearch,
@@ -28,7 +47,7 @@ export function AdsHeader({
     sortDirection,
     setSortColumn,
     setSortDirection,
-}: any) {
+}: AdsHeaderProps) {
     const [opened, setOpened] = useState(false);
 
     return (

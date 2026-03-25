@@ -51,7 +51,7 @@ fastify.post("/grok", async (request, reply) => {
       }),
     });
 
-    const data: any = await response.json();
+    const data: Record<string, unknown> = await response.json();
 
     if (!response.ok) {
       return reply.status(response.status).send({

@@ -8,7 +8,7 @@ import {
     Box,
     Badge,
 } from "@mantine/core";
-import { useState, ReactNode, useEffect } from "react";
+import { useState, type ReactNode, useEffect } from "react";
 
 type Props = {
     children: ReactNode;
@@ -60,6 +60,7 @@ export function AiPopover({
 
     useEffect(() => {
         if (!loading && message) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setOpened(true);
         }
     }, [loading, message]);

@@ -9,8 +9,15 @@ import {
 } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { CATEGORY_NAMES } from "../../../shared/constants/constants";
+import type { AdItem } from "../types";
 
-export function AdCard({ ad, listView = false }: any) {
+export function AdCard({
+    ad,
+    listView = false,
+}: {
+    ad: AdItem;
+    listView?: boolean;
+}) {
     if (listView) {
         return (
             <Card

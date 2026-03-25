@@ -546,6 +546,7 @@ export default function AdsRefactorPage() {
                     onRequest={handleMarketPrice}
                     loading={aiPriceLoading}
                     message={aiPriceMessage}
+                    originalText={formData.price ? `${formData.price}` : "Цена не указана"}
                     onApply={handleApplyPrice}
                 >
                     <Box
@@ -622,6 +623,7 @@ export default function AdsRefactorPage() {
                             onRequest={handleImproveDescription}
                             loading={aiDescriptionLoading}
                             message={aiDescriptionMessage}
+                            originalText={formData.description}
                             onApply={handleApplyDescription}
                         >
                             <Box

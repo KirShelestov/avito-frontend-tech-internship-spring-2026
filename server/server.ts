@@ -19,9 +19,20 @@ fastify.use((_, __, next) =>
   new Promise(res => setTimeout(res, 300 + Math.random() * 700)).then(next),
 );
 
-// Настройка CORS
-fastify.use((_, reply, next) => {
+// Расширенная настройка CORS для поддержки preflight запросов
+fastify.use((request, reply, next) => {
   reply.setHeader('Access-Control-Allow-Origin', '*');
+  reply.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  reply.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  reply.setHeader('Access-Control-Max-Age', '86400');
+  
+  // Обработка preflight запросов (OPTIONS)
+  if (request.method === 'OPTIONS') {
+    reply.statusCode = 200;
+    reply.end();
+    return;
+  }
+  
   next();
 });
 

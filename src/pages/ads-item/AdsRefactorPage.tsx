@@ -500,7 +500,6 @@ export default function AdsRefactorPage() {
                     {error}
                 </Alert>
             )}
-
             <Grid gutter="lg">
                 <Grid.Col span={{ base: 12, md: 8 }}>
                     <Stack>

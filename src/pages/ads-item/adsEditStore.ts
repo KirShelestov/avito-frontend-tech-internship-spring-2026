@@ -23,6 +23,7 @@ type AdsEditState = {
   aiPriceResult: string;
   chatMessages: ChatMessage[];
   chatLoading: boolean;
+  hasDraft: boolean;
   setAd: (value: AdItem | null) => void;
   setLoading: (value: boolean) => void;
   setSaving: (value: boolean) => void;
@@ -40,6 +41,7 @@ type AdsEditState = {
   setChatMessages: (messages: ChatMessage[]) => void;
   setChatLoading: (value: boolean) => void;
   clearChat: () => void;
+  setHasDraft: (value: boolean) => void;
 };
 
 export const useAdsEditStore = create<AdsEditState>((set) => ({
@@ -56,6 +58,7 @@ export const useAdsEditStore = create<AdsEditState>((set) => ({
   aiPriceResult: "",
   chatMessages: [],
   chatLoading: false,
+  hasDraft: false,
   setAd: (ad) => set({ ad }),
   setLoading: (loading) => set({ loading }),
   setSaving: (saving) => set({ saving }),
@@ -89,5 +92,6 @@ export const useAdsEditStore = create<AdsEditState>((set) => ({
   setChatMessages: (chatMessages) => set({ chatMessages }),
   setChatLoading: (chatLoading) => set({ chatLoading }),
   clearChat: () => set({ chatMessages: [] }),
+  setHasDraft: (hasDraft) => set({ hasDraft }),
 }));
 

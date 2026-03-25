@@ -22,17 +22,17 @@ npm install --save-dev vitest @testing-library/react @testing-library/user-event
 Add to your `vite.config.ts`:
 
 ```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  plugins: [react()],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    css: true,
-  },
+    plugins: [react()],
+    test: {
+        globals: true,
+        environment: "jsdom",
+        setupFiles: ["./src/test/setup.ts"],
+        css: true,
+    },
 });
 ```
 
@@ -41,14 +41,14 @@ export default defineConfig({
 Create `src/test/setup.ts`:
 
 ```typescript
-import '@testing-library/jest-dom';
-import { expect, afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
+import "@testing-library/jest-dom";
+import { expect, afterEach, vi } from "vitest";
+import { cleanup } from "@testing-library/react";
 
 afterEach(() => {
-  cleanup();
-  localStorage.clear();
-  vi.clearAllMocks();
+    cleanup();
+    localStorage.clear();
+    vi.clearAllMocks();
 });
 ```
 
@@ -57,6 +57,7 @@ afterEach(() => {
 ### 1. adsEditUtils.test.ts
 
 Tests for utility functions:
+
 - `updateFormData()` - Field updates
 - `updateParams()` - Parameter management
 - `saveDraft()` - Draft persistence
@@ -71,6 +72,7 @@ npm run test src/pages/ads-item/__tests__/adsEditUtils.test.ts
 ### 2. adsEditStore.test.ts
 
 Tests for Zustand store:
+
 - Ad state management
 - Form data management
 - AI state management
@@ -85,6 +87,7 @@ npm run test src/pages/ads-item/__tests__/adsEditStore.test.ts
 ### 3. adsEditService.test.ts
 
 Tests for service layer:
+
 - `improveDescription()` - AI description improvement
 - `marketPrice()` - Market price analysis
 - `applyPriceFromText()` - Price parsing
@@ -99,6 +102,7 @@ npm run test src/pages/ads-item/__tests__/adsEditService.test.ts
 ### 4. ChatBox.test.tsx
 
 Tests for ChatBox component:
+
 - Message rendering
 - User interactions
 - Loading states
@@ -113,6 +117,7 @@ npm run test src/widgets/ads-item/__tests__/ChatBox.test.tsx
 ### 5. AiPopover.test.tsx
 
 Tests for AiPopover component:
+
 - Popover display
 - Text comparison
 - Button interactions
@@ -144,6 +149,85 @@ npm run test:watch
 npm run test:coverage
 ```
 
+## localStorage Persistence Feature
+
+### Overview
+
+The refactor page now includes automatic localStorage persistence to recover changes if the page is accidentally refreshed.
+
+### How It Works
+
+1. **Auto-Save with Debouncing**: Changes are automatically saved to localStorage after 1 second of inactivity
+2. **Draft Recovery**: When the page reloads, saved drafts are automatically restored
+3. **Timestamp Tracking**: Each draft stores a timestamp to help track when changes were last saved
+4. **Visual Indicator**: Users see an alert when a draft is restored showing the feature is working
+
+### Implementation Details
+
+#### Key Functions in `adsEditUtils.ts`:
+
+```typescript
+// Save draft with timestamp
+export const saveDraft = (id: string | undefined, data: FormData)
+
+// Load draft from localStorage
+export const loadDraft = (id: string | undefined): FormData | null
+
+// Get draft timestamp
+export const getDraftTimestamp = (id: string | undefined): Date | null
+
+// Clear specific draft
+export const clearDraft = (id: string | undefined)
+
+// Clear all drafts
+export const clearAllDrafts = ()
+```
+
+#### Key Hook Changes in `useAdsEdit.ts`:
+
+- **Debounced Auto-saving**: Uses a 1-second debounce timer to avoid excessive localStorage writes
+- **Smart Initialization**: Loads draft first, then fetches API data. Draft takes precedence if both exist
+- **Window Unload Handler**: Saves draft before page closes to ensure latest changes are persisted
+- **Cleanup on Save**: Clears draft from localStorage when changes are successfully saved to server
+
+### Testing localStorage Persistence
+
+The test suite includes 36 tests covering:
+
+- Draft saving and loading
+- Timestamp management
+- Clear operations
+- Error handling with corrupted data
+- Edge cases with undefined IDs
+
+Run tests with:
+
+```bash
+npm run test src/pages/ads-item/__tests__/adsEditUtils.test.ts
+```
+
+### User Experience
+
+1. **Opening the page**: Any saved draft is automatically restored
+2. **Making changes**: Changes are saved automatically to localStorage after short idle time
+3. **Seeing the indicator**: A blue alert shows "Восстановлено из черновика" (Recovered from draft)
+4. **Saving**: When clicking "Сохранить" (Save), the draft is cleared from localStorage
+5. **Canceling**: Clicking "Отменить" (Cancel) navigates away but keeps the draft for next time
+
+### Storage Details
+
+Each draft stores:
+- Form data (category, title, price, description, params)
+- Timestamp of last save
+- Keys format: `ad-draft-{id}` and `ad-draft-{id}-timestamp`
+
+### Limitations
+
+- localStorage has ~5-10MB limit per domain
+- Drafts are device/browser specific (not synced across devices)
+- Drafts are cleared when cache is cleared
+- Drafts persist only until successfully saved to server
+
 ### Run Specific Test File
 
 ```bash
@@ -162,12 +246,12 @@ Add these scripts to your `package.json`:
 
 ```json
 {
-  "scripts": {
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
-    "test:ui": "vitest --ui"
-  }
+    "scripts": {
+        "test": "vitest",
+        "test:watch": "vitest --watch",
+        "test:coverage": "vitest --coverage",
+        "test:ui": "vitest --ui"
+    }
 }
 ```
 
@@ -176,8 +260,8 @@ Add these scripts to your `package.json`:
 ### 1. Mocking
 
 ```typescript
-vi.mock('../../../shared/api/llmApi');
-vi.mocked(callGemini).mockResolvedValue('response');
+vi.mock("../../../shared/api/llmApi");
+vi.mocked(callGemini).mockResolvedValue("response");
 ```
 
 ### 2. Async Operations
@@ -193,7 +277,7 @@ await waitFor(() => {
 
 ```typescript
 const user = userEvent.setup();
-await user.type(input, 'text');
+await user.type(input, "text");
 await user.click(button);
 ```
 
@@ -202,7 +286,7 @@ await user.click(button);
 ```typescript
 const { result } = renderHook(() => useAdsEditStore());
 act(() => {
-  result.current.setFormData(data);
+    result.current.setFormData(data);
 });
 ```
 
@@ -224,11 +308,11 @@ render(
 
 ```typescript
 const mockFormData: FormData = {
-  category: "electronics",
-  title: "iPhone 14",
-  price: 50000,
-  description: "Great phone",
-  params: { brand: "Apple" },
+    category: "electronics",
+    title: "iPhone 14",
+    price: 50000,
+    description: "Great phone",
+    params: { brand: "Apple" },
 };
 ```
 
@@ -236,18 +320,18 @@ const mockFormData: FormData = {
 
 ```typescript
 const mockMessages: ChatMessage[] = [
-  {
-    id: "1",
-    role: "user",
-    content: "Hello",
-    timestamp: new Date(),
-  },
-  {
-    id: "2",
-    role: "assistant",
-    content: "Hi there",
-    timestamp: new Date(),
-  },
+    {
+        id: "1",
+        role: "user",
+        content: "Hello",
+        timestamp: new Date(),
+    },
+    {
+        id: "2",
+        role: "assistant",
+        content: "Hi there",
+        timestamp: new Date(),
+    },
 ];
 ```
 
@@ -255,15 +339,15 @@ const mockMessages: ChatMessage[] = [
 
 ```typescript
 const mockAd: AdItem = {
-  id: 1,
-  category: "electronics",
-  title: "iPhone",
-  price: 50000,
-  description: "Great phone",
-  params: {},
-  imageUrl: "url",
-  views: 0,
-  createdAt: new Date(),
+    id: 1,
+    category: "electronics",
+    title: "iPhone",
+    price: 50000,
+    description: "Great phone",
+    params: {},
+    imageUrl: "url",
+    views: 0,
+    createdAt: new Date(),
 };
 ```
 
@@ -281,17 +365,21 @@ const mockAd: AdItem = {
 
 ```typescript
 // Increase timeout
-it('test name', async () => {
-  // test code
-}, { timeout: 10000 });
+it(
+    "test name",
+    async () => {
+        // test code
+    },
+    { timeout: 10000 },
+);
 ```
 
 ### Issue: localStorage not clearing
 
 ```typescript
 beforeEach(() => {
-  localStorage.clear();
-  vi.clearAllMocks();
+    localStorage.clear();
+    vi.clearAllMocks();
 });
 ```
 
@@ -299,14 +387,14 @@ beforeEach(() => {
 
 ```typescript
 await waitFor(() => {
-  expect(screen.getByText('...')).toBeInTheDocument();
+    expect(screen.getByText("...")).toBeInTheDocument();
 });
 ```
 
 ### Issue: Unmocked API calls
 
 ```typescript
-vi.mock('../path/to/module');
+vi.mock("../path/to/module");
 vi.mocked(functionName).mockResolvedValue(data);
 ```
 
@@ -326,23 +414,23 @@ vi.mocked(functionName).mockResolvedValue(data);
 ### Debug a Specific Test
 
 ```typescript
-it.only('test name', () => {
-  // Only this test will run
+it.only("test name", () => {
+    // Only this test will run
 });
 ```
 
 ### Skip a Test
 
 ```typescript
-it.skip('test name', () => {
-  // This test will be skipped
+it.skip("test name", () => {
+    // This test will be skipped
 });
 ```
 
 ### Add Debug Output
 
 ```typescript
-import { screen, debug } from '@testing-library/react';
+import { screen, debug } from "@testing-library/react";
 
 debug(); // Prints the DOM
 screen.debug(element); // Prints specific element
@@ -352,12 +440,12 @@ screen.debug(element); // Prints specific element
 
 ```json
 {
-  "type": "node",
-  "request": "launch",
-  "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
-  "args": ["--inspect-brk", "--no-coverage"],
-  "console": "integratedTerminal",
-  "internalConsoleOptions": "neverOpen"
+    "type": "node",
+    "request": "launch",
+    "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+    "args": ["--inspect-brk", "--no-coverage"],
+    "console": "integratedTerminal",
+    "internalConsoleOptions": "neverOpen"
 }
 ```
 
@@ -371,16 +459,16 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - run: npm install
-      - run: npm run test:coverage
-      - uses: codecov/codecov-action@v3
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: "18"
+            - run: npm install
+            - run: npm run test:coverage
+            - uses: codecov/codecov-action@v3
 ```
 
 ## Continuous Monitoring

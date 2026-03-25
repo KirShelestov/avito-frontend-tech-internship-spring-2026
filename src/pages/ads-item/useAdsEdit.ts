@@ -2,13 +2,17 @@ import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getItemById, updateItem } from "../../entities/ad/api/adApi";
 import { improveDescription, marketPrice, applyPriceFromText, chatWithAI } from "./adsEditService";
-import { loadDraft, saveDraft } from "./adsEditUtils";
+import { loadDraft, saveDraft, clearDraft } from "./adsEditUtils";
 import { useAdsEditStore, type ChatMessage } from "./adsEditStore";
+
+const AUTOSAVE_DELAY = 1000; 
 
 export const useAdsEdit = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedDataRef = useRef<string | null>(null);
 
   const {
     ad,
@@ -24,6 +28,7 @@ export const useAdsEdit = () => {
     aiPriceResult,
     chatMessages,
     chatLoading,
+    hasDraft,
     setAd,
     setLoading,
     setSaving,
@@ -39,54 +44,92 @@ export const useAdsEdit = () => {
     setAiPriceResult,
     addChatMessage,
     setChatLoading,
+    setHasDraft,
   } = useAdsEditStore();
 
+  // Инициализация: попытка загрузить черновик из localStorage перед загрузкой с API
   useEffect(() => {
     if (!id) {
       setLoading(false);
       return;
     }
 
+    const draft = loadDraft(id);
+    if (draft) {
+      setFormData(draft);
+      setHasDraft(true);
+    }
     getItemById(Number(id))
       .then((res) => {
         const item = res.data;
         setAd(item);
-        setFormData({
-          category: item.category,
-          title: item.title,
-          price: item.price,
-          description: item.description || "",
-          params: item.params || {},
-        });
+        if (!draft) {
+          setFormData({
+            category: item.category,
+            title: item.title,
+            price: item.price,
+            description: item.description || "",
+            params: item.params || {},
+          });
+        }
       })
       .catch((err) => {
         console.error("Ошибка загрузки объявления", err);
         setError("Не удалось загрузить объявление");
       })
       .finally(() => setLoading(false));
-  }, [id, setAd, setFormData, setError, setLoading]);
+  }, [id, setAd, setFormData, setError, setLoading, setHasDraft]);
 
   useEffect(() => {
-    const draft = loadDraft(id);
-    if (draft) {
-      setFormData(draft);
+    if (!id) return;
+
+    const currentDataString = JSON.stringify(formData);
+    if (currentDataString === lastSavedDataRef.current) {
+      return;
     }
-  }, [id, setFormData]);
 
-  useEffect(() => {
-    if (id && ad) {
+    if (autosaveTimerRef.current) {
+      clearTimeout(autosaveTimerRef.current);
+    }
+
+    autosaveTimerRef.current = setTimeout(() => {
       saveDraft(id, formData);
-    }
-  }, [formData, id, ad]);
+      lastSavedDataRef.current = currentDataString;
+      console.log(`Черновик для объявления #${id} сохранен в localStorage`);
+    }, AUTOSAVE_DELAY);
+
+    return () => {
+      if (autosaveTimerRef.current) {
+        clearTimeout(autosaveTimerRef.current);
+      }
+    };
+  }, [formData, id]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (id && formData) {
+        saveDraft(id, formData);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.body.classList.remove("ads-edit-page");
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (autosaveTimerRef.current) {
+        clearTimeout(autosaveTimerRef.current);
+      }
+    };
+  }, [id, formData]);
 
   useEffect(() => {
     document.body.classList.add("ads-edit-page");
     return () => {
       document.body.classList.remove("ads-edit-page");
-      // Отмена всех активных запросов при размонтировании компонента
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
     };
   }, []);
 
@@ -118,7 +161,8 @@ export const useAdsEdit = () => {
         params: formData.params,
       });
 
-      localStorage.removeItem(`ad-draft-${id}`);
+      clearDraft(id);
+      setHasDraft(false);
       navigate(`/ads/${id}`);
     } catch (err) {
       console.error("Ошибка сохранения", err);
@@ -129,7 +173,6 @@ export const useAdsEdit = () => {
   };
 
   const handleCancel = () => {
-    // Отмена всех активных запросов AI при отмене
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -146,7 +189,6 @@ export const useAdsEdit = () => {
     setAiDescriptionLoading(true);
     setAiPriceMessage("");
 
-    // Создаём новый AbortController для этого запроса
     abortControllerRef.current = new AbortController();
 
     try {
@@ -157,7 +199,6 @@ export const useAdsEdit = () => {
       setAiDescriptionResult(result);
       setAiDescriptionMessage(result);
     } catch (err: any) {
-      // Игнорируем ошибку отмены
       if (err.name === "AbortError") {
         console.log("Запрос описания отменён");
         return;
@@ -186,7 +227,6 @@ export const useAdsEdit = () => {
       setAiPriceResult(result);
       setAiPriceMessage(result);
     } catch (err: any) {
-      // Игнорируем ошибку отмены
       if (err.name === "AbortError") {
         console.log("Запрос цены отменён");
         return;
@@ -285,5 +325,6 @@ export const useAdsEdit = () => {
     handleSendChatMessage,
     updateField,
     updateParam,
+    hasDraft,
   };
 };

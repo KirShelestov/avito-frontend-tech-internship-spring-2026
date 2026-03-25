@@ -1,4 +1,5 @@
 import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { useAppStore } from "./shared/stores/appStore";
 import { AppWithTheme } from "./AppWithTheme";
 
@@ -12,6 +13,7 @@ export function App() {
             }}
             forceColorScheme={theme}
         >
+            <Notifications position="top-right" />
             <AppWithTheme />
         </MantineProvider>
     );

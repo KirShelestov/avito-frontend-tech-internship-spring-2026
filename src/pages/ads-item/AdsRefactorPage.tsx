@@ -13,13 +13,11 @@ import {
     Divider,
     Loader,
     Center,
-    Alert,
     Grid,
 } from "@mantine/core";
 import {
     IconBulb,
     IconCircleXFilled,
-    IconAlertCircle,
     IconChevronUp,
     IconChevronDown,
     IconReload,
@@ -490,16 +488,6 @@ export default function AdsRefactorPage() {
                 Редактирование объявления
             </Title>
 
-            {error && (
-                <Alert
-                    icon={<IconAlertCircle size={16} />}
-                    title="Ошибка"
-                    color="red"
-                    mb="md"
-                >
-                    {error}
-                </Alert>
-            )}
             <Grid gutter="lg">
                 <Grid.Col span={{ base: 12, md: 8 }}>
                     <Stack>

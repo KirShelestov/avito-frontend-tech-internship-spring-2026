@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { getItemById, updateItem } from "../../entities/ad/api/adApi";
+import { useNavigate, useParams } from "react-router-dom";import { notifications } from "@mantine/notifications";import { getItemById, updateItem } from "../../entities/ad/api/adApi";
 import { improveDescription, marketPrice, applyPriceFromText, chatWithAI } from "./adsEditService";
 import { loadDraft, saveDraft, clearDraft } from "./adsEditUtils";
 import { useAdsEditStore, type ChatMessage } from "./adsEditStore";
@@ -75,7 +74,14 @@ export const useAdsEdit = () => {
       })
       .catch((err) => {
         console.error("Ошибка загрузки объявления", err);
-        setError("Не удалось загрузить объявление");
+        const errorMessage = "Не удалось загрузить объявление";
+        setError(errorMessage);
+        notifications.show({
+          title: "Ошибка",
+          message: errorMessage,
+          color: "red",
+          autoClose: 5000,
+        });
       })
       .finally(() => setLoading(false));
   }, [id, setAd, setFormData, setError, setLoading, setHasDraft]);
@@ -137,14 +143,32 @@ export const useAdsEdit = () => {
     if (!id || !ad) return;
 
     if (!formData.title.trim()) {
+      notifications.show({
+        title: "Ошибка",
+        message: "Название обязательно для заполнения",
+        color: "red",
+        autoClose: 5000,
+      });
       setError("Название обязательно для заполнения");
       return;
     }
     if (!formData.category) {
+      notifications.show({
+        title: "Ошибка",
+        message: "Категория обязательна для заполнения",
+        color: "red",
+        autoClose: 5000,
+      });
       setError("Категория обязательна для заполнения");
       return;
     }
     if (formData.price <= 0) {
+      notifications.show({
+        title: "Ошибка",
+        message: "Цена должна быть больше 0",
+        color: "red",
+        autoClose: 5000,
+      });
       setError("Цена должна быть больше 0");
       return;
     }
@@ -163,10 +187,29 @@ export const useAdsEdit = () => {
 
       clearDraft(id);
       setHasDraft(false);
-      navigate(`/ads/${id}`);
+      
+      // Показать успешное сохранение
+      notifications.show({
+        title: "Успешно!",
+        message: "Объявление сохранено",
+        color: "green",
+        autoClose: 1000,
+      });
+      
+      // Редирект через 1 секунду
+      setTimeout(() => {
+        navigate(`/ads/${id}`);
+      }, 1000);
     } catch (err) {
       console.error("Ошибка сохранения", err);
-      setError("Ошибка сохранения объявления");
+      const errorMessage = "Ошибка сохранения объявления";
+      setError(errorMessage);
+      notifications.show({
+        title: "Ошибка",
+        message: errorMessage,
+        color: "red",
+        autoClose: 5000,
+      });
     } finally {
       setSaving(false);
     }

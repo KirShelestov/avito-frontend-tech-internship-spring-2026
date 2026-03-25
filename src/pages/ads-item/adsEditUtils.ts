@@ -24,7 +24,7 @@ export const updateFormData = (
     }
 
     if (field === "params" && typeof value === "object" && value !== null) {
-        return { ...prevData, params: value as Record<string, unknown> };
+        return { ...prevData, params: value as Record<string, string | number | undefined> };
     }
 
     return prevData;

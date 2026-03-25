@@ -51,3 +51,20 @@ export const applyPriceFromText = (aiPriceResult: string) => {
         message: `Цена применена: ${price}`,
     };
 };
+
+export const chatWithAI = async (
+    userMessage: string,
+    formData: FormData,
+    signal?: AbortSignal
+) => {
+    const context = buildAdContext(formData);
+    const prompt = `Контекст объявления:
+${context}
+
+Вопрос пользователя: ${userMessage}
+
+Ответьте на вопрос в контексте данного объявления.`;
+
+    const text = await callGemini(prompt, signal);
+    return text?.trim() || "";
+};

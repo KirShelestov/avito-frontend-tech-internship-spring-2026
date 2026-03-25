@@ -14,6 +14,7 @@ import {
     Loader,
     Center,
     Alert,
+    Grid,
 } from "@mantine/core";
 import {
     IconBulb,
@@ -25,6 +26,7 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { AiPopover } from "../../widgets/ads-item/AiPopeover";
+import { ChatBox } from "../../widgets/ads-item/ChatBox";
 import { useAdsEdit } from "./useAdsEdit";
 import type { FormData } from "./adsEditTypes";
 
@@ -67,12 +69,15 @@ export default function AdsRefactorPage() {
         aiPriceLoading,
         aiDescriptionMessage,
         aiPriceMessage,
+        chatMessages,
+        chatLoading,
         handleSave,
         handleCancel,
         handleImproveDescription,
         handleMarketPrice,
         handleApplyDescription,
         handleApplyPrice,
+        handleSendChatMessage,
         updateField,
         updateParam,
     } = useAdsEdit();
@@ -91,6 +96,14 @@ export default function AdsRefactorPage() {
 
     const onParamChange = (key: string, value: string | number) => {
         updateParam(key, value);
+    };
+
+    const handleClearField = (field: keyof FormData) => {
+        onInputChange(field, "");
+    };
+
+    const handleClearParam = (key: string) => {
+        onParamChange(key, "");
     };
 
     const getBorderColor = (fieldName: string, isEmpty: boolean): string => {
@@ -138,8 +151,13 @@ export default function AdsRefactorPage() {
                         onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
-                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                            <IconCircleXFilled
+                                onClick={() => handleClearParam("brand")}
+                                size={14}
+                                color="#D9D9D9"
+                            />
                         }
+                        rightSectionPointerEvents="auto"
                         styles={() => {
                             const isEmpty =
                                 !formData.params.brand ||
@@ -157,8 +175,13 @@ export default function AdsRefactorPage() {
                         onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
-                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                            <IconCircleXFilled
+                                onClick={() => handleClearParam("model")}
+                                size={14}
+                                color="#D9D9D9"
+                            />
                         }
+                        rightSectionPointerEvents="auto"
                         styles={() => {
                             const isEmpty =
                                 !formData.params.model ||
@@ -271,8 +294,13 @@ export default function AdsRefactorPage() {
                         onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
-                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                            <IconCircleXFilled
+                                onClick={() => handleClearParam("address")}
+                                size={14}
+                                color="#D9D9D9"
+                            />
                         }
+                        rightSectionPointerEvents="auto"
                         styles={() => {
                             const isEmpty =
                                 !formData.params.address ||
@@ -356,8 +384,13 @@ export default function AdsRefactorPage() {
                         onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
-                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                            <IconCircleXFilled
+                                onClick={() => handleClearParam("brand")}
+                                size={14}
+                                color="#D9D9D9"
+                            />
                         }
+                        rightSectionPointerEvents="auto"
                         styles={() => {
                             const isEmpty =
                                 !formData.params.brand ||
@@ -375,8 +408,13 @@ export default function AdsRefactorPage() {
                         onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
-                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                            <IconCircleXFilled
+                                onClick={() => handleClearParam("model")}
+                                size={14}
+                                color="#D9D9D9"
+                            />
                         }
+                        rightSectionPointerEvents="auto"
                         styles={() => {
                             const isEmpty =
                                 !formData.params.model ||
@@ -394,8 +432,13 @@ export default function AdsRefactorPage() {
                         onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
-                            <IconCircleXFilled size={14} color="#D9D9D9" />
+                            <IconCircleXFilled
+                                onClick={() => handleClearParam("color")}
+                                size={14}
+                                color="#D9D9D9"
+                            />
                         }
+                        rightSectionPointerEvents="auto"
                         styles={() => {
                             const isEmpty =
                                 !formData.params.color ||
@@ -442,7 +485,7 @@ export default function AdsRefactorPage() {
     };
 
     return (
-        <Container size="md" py="xl" ml={100}>
+        <Container size="lg" py="xl">
             <Title order={2} mb="lg" fw={600}>
                 Редактирование объявления
             </Title>
@@ -458,230 +501,263 @@ export default function AdsRefactorPage() {
                 </Alert>
             )}
 
-            <Stack maw={400} gap="md">
-                <Select
-                    radius={8}
-                    styles={() => {
-                        const isEmpty =
-                            !formData.category ||
-                            formData.category.trim() === "";
-                        return getInputStyles("category", isEmpty);
-                    }}
-                    label="Категория"
-                    placeholder="Выберите категорию"
-                    data={CATEGORY_OPTIONS}
-                    value={formData.category}
-                    onChange={(value) =>
-                        value != null && onInputChange("category", value)
-                    }
-                    onFocus={() => setFocusedField("category")}
-                    onBlur={() => setFocusedField(null)}
-                    rightSectionPointerEvents="none"
-                    w="100%"
-                    onDropdownOpen={() => setOpenedCategory(true)}
-                    onDropdownClose={() => setOpenedCategory(false)}
-                    rightSection={
-                        openedCategory ? (
-                            <IconChevronUp size={16} />
-                        ) : (
-                            <IconChevronDown size={16} />
-                        )
-                    }
-                />
-                <TextInput
-                    radius={8}
-                    label="Название"
-                    placeholder="Например, MacBook Pro 16"
-                    value={formData.title}
-                    onChange={(e) => onInputChange("title", e.target.value)}
-                    onFocus={() => setFocusedField("title")}
-                    onBlur={() => setFocusedField(null)}
-                    withAsterisk
-                    rightSection={
-                        <IconCircleXFilled size={14} color="#D9D9D9" />
-                    }
-                    w="100%"
-                    styles={() => {
-                        const isEmpty =
-                            !formData.title || formData.title.trim() === "";
-                        return getInputStyles("title", isEmpty);
-                    }}
-                />
-            </Stack>
+            <Grid gutter="lg">
+                <Grid.Col span={{ base: 12, md: 8 }}>
+                    <Stack>
+                        <Select
+                            radius={8}
+                            styles={() => {
+                                const isEmpty =
+                                    !formData.category ||
+                                    formData.category.trim() === "";
+                                return getInputStyles("category", isEmpty);
+                            }}
+                            label="Категория"
+                            placeholder="Выберите категорию"
+                            data={CATEGORY_OPTIONS}
+                            value={formData.category}
+                            onChange={(value) =>
+                                value != null &&
+                                onInputChange("category", value)
+                            }
+                            onFocus={() => setFocusedField("category")}
+                            onBlur={() => setFocusedField(null)}
+                            rightSectionPointerEvents="none"
+                            w="100%"
+                            onDropdownOpen={() => setOpenedCategory(true)}
+                            onDropdownClose={() => setOpenedCategory(false)}
+                            rightSection={
+                                openedCategory ? (
+                                    <IconChevronUp size={16} />
+                                ) : (
+                                    <IconChevronDown size={16} />
+                                )
+                            }
+                        />
+                        <TextInput
+                            radius={8}
+                            label="Название"
+                            placeholder="Например, MacBook Pro 16"
+                            value={formData.title}
+                            onChange={(e) =>
+                                onInputChange("title", e.target.value)
+                            }
+                            onFocus={() => setFocusedField("title")}
+                            onBlur={() => setFocusedField(null)}
+                            withAsterisk
+                            rightSection={
+                                <IconCircleXFilled
+                                    onClick={() => handleClearField("title")}
+                                    size={14}
+                                    color="#D9D9D9"
+                                />
+                            }
+                            rightSectionPointerEvents="auto"
+                            w="100%"
+                            styles={() => {
+                                const isEmpty =
+                                    !formData.title ||
+                                    formData.title.trim() === "";
+                                return getInputStyles("title", isEmpty);
+                            }}
+                        />
+                    </Stack>
 
-            <Divider my="sm" labelPosition="center" variant="dotted" />
+                    <Divider my="sm" labelPosition="center" variant="dotted" />
 
-            <Group style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
-                <NumberInput
-                    radius={8}
-                    label="Цена"
-                    placeholder="64000"
-                    value={formData.price}
-                    onChange={(value) =>
-                        value != null && onInputChange("price", value)
-                    }
-                    onFocus={() => setFocusedField("price")}
-                    onBlur={() => setFocusedField(null)}
-                    withAsterisk
-                    rightSection={
-                        <IconCircleXFilled size={14} color="#D9D9D9" />
-                    }
-                    style={{ flex: 1, maxWidth: 400 }}
-                    styles={() => {
-                        const isEmpty = formData.price == null;
-                        return {
-                            input: {
-                                width: "100%",
-                                border: `2px solid ${getBorderColor("price", isEmpty)}`,
-                                transition: "border-color 0.2s ease",
-                                "&:focus": {
-                                    borderColor: "var(--mantine-color-blue-6)",
-                                },
-                            },
-                            wrapper: { flex: 1 },
-                        };
-                    }}
-                />
-                <AiPopover
-                    onRequest={handleMarketPrice}
-                    loading={aiPriceLoading}
-                    message={aiPriceMessage}
-                    originalText={formData.price ? `${formData.price}` : "Цена не указана"}
-                    onApply={handleApplyPrice}
-                >
-                    <Box
+                    <Group
                         style={{
-                            backgroundColor: "#FFF4E6",
-                            padding: "8px 12px",
-                            borderRadius: "6px",
                             display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
+                            alignItems: "flex-end",
+                            gap: 12,
                         }}
                     >
-                        {aiPriceLoading ? (
-                            <Loader size={14} color="#FD7E14" />
-                        ) : aiPriceMessage ? (
-                            <IconReload size={14} color="#FD7E14" />
-                        ) : (
-                            <IconBulb size={14} color="#FD7E14" />
-                        )}
-                        <Text size="xs" c="#FD7E14" fw={500}>
-                            {aiPriceMessage
-                                ? "Повторить запрос"
-                                : "Узнать рыночную цену"}
-                        </Text>
-                    </Box>
-                </AiPopover>
-            </Group>
-
-            <Divider my="sm" labelPosition="center" variant="dotted" />
-
-            <Stack maw={400} gap="md">
-                <Title order={4} mt="md">
-                    Характеристики
-                </Title>
-
-                {renderCharacteristics()}
-            </Stack>
-
-            <Divider my="sm" labelPosition="center" variant="dotted" />
-
-            <Stack>
-                <Stack gap={8}>
-                    <Text size="sm" fw={500}>
-                        Описание
-                    </Text>
-                    <Textarea
-                        radius={12}
-                        placeholder="Опишите ваш товар..."
-                        minRows={4}
-                        autosize
-                        maxRows={15}
-                        value={formData.description}
-                        onChange={(e) =>
-                            onInputChange("description", e.target.value)
-                        }
-                        onFocus={() => setFocusedField("description")}
-                        onBlur={() => setFocusedField(null)}
-                        styles={() => {
-                            const isEmpty =
-                                !formData.description ||
-                                formData.description.trim() === "";
-                            return {
-                                input: {
-                                    border: `2px solid ${getBorderColor("description", isEmpty)}`,
-                                    transition: "border-color 0.2s ease",
-                                },
-                            };
-                        }}
-                    />
-                    <Group justify="space-between">
+                        <NumberInput
+                            radius={8}
+                            label="Цена"
+                            placeholder="64000"
+                            value={formData.price}
+                            onChange={(value) =>
+                                value != null && onInputChange("price", value)
+                            }
+                            onFocus={() => setFocusedField("price")}
+                            onBlur={() => setFocusedField(null)}
+                            withAsterisk
+                            rightSection={
+                                <IconCircleXFilled
+                                    onClick={() => handleClearField("price")}
+                                    size={14}
+                                    color="#D9D9D9"
+                                />
+                            }
+                            style={{ flex: 1, maxWidth: 400 }}
+                            styles={() => {
+                                const isEmpty = formData.price == null;
+                                return {
+                                    input: {
+                                        width: "100%",
+                                        border: `2px solid ${getBorderColor("price", isEmpty)}`,
+                                        transition: "border-color 0.2s ease",
+                                        "&:focus": {
+                                            borderColor:
+                                                "var(--mantine-color-blue-6)",
+                                        },
+                                    },
+                                    wrapper: { flex: 1 },
+                                };
+                            }}
+                        />
                         <AiPopover
-                            onRequest={handleImproveDescription}
-                            loading={aiDescriptionLoading}
-                            message={aiDescriptionMessage}
-                            originalText={formData.description}
-                            onApply={handleApplyDescription}
+                            onRequest={handleMarketPrice}
+                            loading={aiPriceLoading}
+                            message={aiPriceMessage}
+                            originalText={
+                                formData.price
+                                    ? `${formData.price}`
+                                    : "Цена не указана"
+                            }
+                            onApply={handleApplyPrice}
                         >
                             <Box
                                 style={{
                                     backgroundColor: "#FFF4E6",
-                                    padding: "6px 10px",
+                                    padding: "8px 12px",
                                     borderRadius: "6px",
                                     display: "flex",
                                     alignItems: "center",
                                     gap: "6px",
-                                    width: "fit-content",
                                     cursor: "pointer",
+                                    whiteSpace: "nowrap",
                                 }}
                             >
-                                {aiDescriptionLoading ? (
-                                    <Loader size={12} color="#FD7E14" />
-                                ) : aiDescriptionMessage ? (
+                                {aiPriceLoading ? (
+                                    <Loader size={14} color="#FD7E14" />
+                                ) : aiPriceMessage ? (
                                     <IconReload size={14} color="#FD7E14" />
                                 ) : (
                                     <IconBulb size={14} color="#FD7E14" />
                                 )}
                                 <Text size="xs" c="#FD7E14" fw={500}>
-                                    {aiDescriptionMessage
+                                    {aiPriceMessage
                                         ? "Повторить запрос"
-                                        : "Улучшить описание"}
+                                        : "Узнать рыночную цену"}
                                 </Text>
                             </Box>
                         </AiPopover>
-                        <Text size="xs" c="dimmed">
-                            {formData.description.length} / 1000
-                        </Text>
                     </Group>
-                </Stack>
 
-                <Group mt="xl">
-                    <Button
-                        radius="md"
-                        size="md"
-                        px="xl"
-                        color="blue"
-                        onClick={handleSave}
-                        loading={saving}
-                    >
-                        Сохранить
-                    </Button>
-                    <Button
-                        radius="md"
-                        size="md"
-                        px="xl"
-                        variant="filled"
-                        color="#D9D9D9"
-                        c="black"
-                        onClick={handleCancel}
-                    >
-                        Отменить
-                    </Button>
-                </Group>
-            </Stack>
+                    <Divider my="sm" labelPosition="center" variant="dotted" />
+
+                    <Title order={4} mt="md">
+                        Характеристики
+                    </Title>
+
+                    {renderCharacteristics()}
+
+                    <Divider my="sm" labelPosition="center" variant="dotted" />
+
+                    <Stack gap={8}>
+                        <Text size="sm" fw={500}>
+                            Описание
+                        </Text>
+                        <Textarea
+                            radius={12}
+                            placeholder="Опишите ваш товар..."
+                            minRows={4}
+                            autosize
+                            maxRows={15}
+                            value={formData.description}
+                            onChange={(e) =>
+                                onInputChange("description", e.target.value)
+                            }
+                            onFocus={() => setFocusedField("description")}
+                            onBlur={() => setFocusedField(null)}
+                            styles={() => {
+                                const isEmpty =
+                                    !formData.description ||
+                                    formData.description.trim() === "";
+                                return {
+                                    input: {
+                                        border: `2px solid ${getBorderColor("description", isEmpty)}`,
+                                        transition: "border-color 0.2s ease",
+                                    },
+                                };
+                            }}
+                        />
+                        <Group justify="space-between">
+                            <AiPopover
+                                onRequest={handleImproveDescription}
+                                loading={aiDescriptionLoading}
+                                message={aiDescriptionMessage}
+                                originalText={formData.description}
+                                onApply={handleApplyDescription}
+                            >
+                                <Box
+                                    style={{
+                                        backgroundColor: "#FFF4E6",
+                                        padding: "6px 10px",
+                                        borderRadius: "6px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "6px",
+                                        width: "fit-content",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    {aiDescriptionLoading ? (
+                                        <Loader size={12} color="#FD7E14" />
+                                    ) : aiDescriptionMessage ? (
+                                        <IconReload size={14} color="#FD7E14" />
+                                    ) : (
+                                        <IconBulb size={14} color="#FD7E14" />
+                                    )}
+                                    <Text size="xs" c="#FD7E14" fw={500}>
+                                        {aiDescriptionMessage
+                                            ? "Повторить запрос"
+                                            : "Улучшить описание"}
+                                    </Text>
+                                </Box>
+                            </AiPopover>
+                            <Text size="xs" c="dimmed">
+                                {formData.description.length} / 1000
+                            </Text>
+                        </Group>
+
+                        <Group mt="xl">
+                            <Button
+                                radius="md"
+                                size="md"
+                                px="xl"
+                                color="blue"
+                                onClick={handleSave}
+                                loading={saving}
+                            >
+                                Сохранить
+                            </Button>
+                            <Button
+                                radius="md"
+                                size="md"
+                                px="xl"
+                                variant="filled"
+                                color="#D9D9D9"
+                                c="black"
+                                onClick={handleCancel}
+                            >
+                                Отменить
+                            </Button>
+                        </Group>
+                    </Stack>
+                </Grid.Col>
+
+                {/* Чат с AI */}
+                <Grid.Col span={{ base: 12, md: 4 }}>
+                    <ChatBox
+                        messages={chatMessages}
+                        loading={chatLoading}
+                        onSendMessage={handleSendChatMessage}
+                    />
+                </Grid.Col>
+            </Grid>
         </Container>
     );
 }

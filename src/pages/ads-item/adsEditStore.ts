@@ -2,6 +2,13 @@ import { create } from "zustand";
 import type { AdItem } from "../../entities/ad/types";
 import type { FormData } from "./adsEditTypes";
 
+export type ChatMessage = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+};
+
 type AdsEditState = {
   ad: AdItem | null;
   loading: boolean;
@@ -14,6 +21,8 @@ type AdsEditState = {
   aiPriceMessage: string;
   aiDescriptionResult: string;
   aiPriceResult: string;
+  chatMessages: ChatMessage[];
+  chatLoading: boolean;
   setAd: (value: AdItem | null) => void;
   setLoading: (value: boolean) => void;
   setSaving: (value: boolean) => void;
@@ -27,6 +36,10 @@ type AdsEditState = {
   setAiPriceMessage: (value: string) => void;
   setAiDescriptionResult: (value: string) => void;
   setAiPriceResult: (value: string) => void;
+  addChatMessage: (message: ChatMessage) => void;
+  setChatMessages: (messages: ChatMessage[]) => void;
+  setChatLoading: (value: boolean) => void;
+  clearChat: () => void;
 };
 
 export const useAdsEditStore = create<AdsEditState>((set) => ({
@@ -41,6 +54,8 @@ export const useAdsEditStore = create<AdsEditState>((set) => ({
   aiPriceMessage: "",
   aiDescriptionResult: "",
   aiPriceResult: "",
+  chatMessages: [],
+  chatLoading: false,
   setAd: (ad) => set({ ad }),
   setLoading: (loading) => set({ loading }),
   setSaving: (saving) => set({ saving }),
@@ -68,4 +83,11 @@ export const useAdsEditStore = create<AdsEditState>((set) => ({
   setAiPriceMessage: (aiPriceMessage) => set({ aiPriceMessage }),
   setAiDescriptionResult: (aiDescriptionResult) => set({ aiDescriptionResult }),
   setAiPriceResult: (aiPriceResult) => set({ aiPriceResult }),
+  addChatMessage: (message) => set((state) => ({
+    chatMessages: [...state.chatMessages, message],
+  })),
+  setChatMessages: (chatMessages) => set({ chatMessages }),
+  setChatLoading: (chatLoading) => set({ chatLoading }),
+  clearChat: () => set({ chatMessages: [] }),
 }));
+

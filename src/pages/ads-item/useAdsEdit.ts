@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getItemById, updateItem } from "../../entities/ad/api/adApi";
-import { improveDescription, marketPrice, applyPriceFromText } from "./adsEditService";
+import { improveDescription, marketPrice, applyPriceFromText, chatWithAI } from "./adsEditService";
 import { loadDraft, saveDraft } from "./adsEditUtils";
-import { useAdsEditStore } from "./adsEditStore";
+import { useAdsEditStore, type ChatMessage } from "./adsEditStore";
 
 export const useAdsEdit = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +22,8 @@ export const useAdsEdit = () => {
     aiPriceMessage,
     aiDescriptionResult,
     aiPriceResult,
+    chatMessages,
+    chatLoading,
     setAd,
     setLoading,
     setSaving,
@@ -35,6 +37,8 @@ export const useAdsEdit = () => {
     setAiPriceMessage,
     setAiDescriptionResult,
     setAiPriceResult,
+    addChatMessage,
+    setChatLoading,
   } = useAdsEditStore();
 
   useEffect(() => {
@@ -216,6 +220,50 @@ export const useAdsEdit = () => {
     setAiPriceResult("");
   };
 
+  const handleSendChatMessage = async (messageText: string) => {
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: "user",
+      content: messageText,
+      timestamp: new Date(),
+    };
+    addChatMessage(userMessage);
+
+    setChatLoading(true);
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const response = await chatWithAI(
+        messageText,
+        formData,
+        abortControllerRef.current.signal
+      );
+
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: response || "Не удалось получить ответ от AI",
+        timestamp: new Date(),
+      };
+      addChatMessage(assistantMessage);
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        console.log("Запрос чата отменён");
+        return;
+      }
+      console.error("Chat error", err);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: `Ошибка: ${err.message || "Не удалось получить ответ"}`,
+        timestamp: new Date(),
+      };
+      addChatMessage(errorMessage);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   return {
     ad,
     loading,
@@ -232,6 +280,9 @@ export const useAdsEdit = () => {
     handleMarketPrice,
     handleApplyDescription,
     handleApplyPrice,
+    chatMessages,
+    chatLoading,
+    handleSendChatMessage,
     updateField,
     updateParam,
   };

@@ -21,6 +21,7 @@ import {
     IconAlertCircle,
     IconChevronUp,
     IconChevronDown,
+    IconReload,
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { AiPopover } from "../../widgets/ads-item/AiPopeover";
@@ -79,6 +80,7 @@ export default function AdsRefactorPage() {
     const [openedCondition, setOpenedCondition] = useState(false);
     const [openedType, setOpenedType] = useState(false);
     const [openedCategory, setOpenedCategory] = useState(false);
+    const [focusedField, setFocusedField] = useState<string | null>(null);
 
     const onInputChange = (
         field: keyof FormData,
@@ -90,6 +92,22 @@ export default function AdsRefactorPage() {
     const onParamChange = (key: string, value: string | number) => {
         updateParam(key, value);
     };
+
+    const getBorderColor = (fieldName: string, isEmpty: boolean): string => {
+        if (focusedField === fieldName) {
+            return "var(--mantine-color-blue-6)";
+        }
+        return isEmpty
+            ? "var(--mantine-color-orange-6)"
+            : "var(--mantine-color-gray-4)";
+    };
+
+    const getInputStyles = (fieldName: string, isEmpty: boolean) => ({
+        input: {
+            border: `2px solid ${getBorderColor(fieldName, isEmpty)}`,
+            transition: "border-color 0.2s ease",
+        },
+    });
 
     if (loading) {
         return (
@@ -116,24 +134,18 @@ export default function AdsRefactorPage() {
                         label="Бренд"
                         value={String(formData.params.brand || "")}
                         onChange={(e) => onParamChange("brand", e.target.value)}
+                        onFocus={() => setFocusedField("brand")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.brand ||
+                                (typeof formData.params.brand === "string" &&
+                                    formData.params.brand.trim() === "");
+                            return getInputStyles("brand", isEmpty);
                         }}
                     />
                     <TextInput
@@ -141,24 +153,18 @@ export default function AdsRefactorPage() {
                         label="Модель"
                         value={String(formData.params.model || "")}
                         onChange={(e) => onParamChange("model", e.target.value)}
+                        onFocus={() => setFocusedField("model")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.model ||
+                                (typeof formData.params.model === "string" &&
+                                    formData.params.model.trim() === "");
+                            return getInputStyles("model", isEmpty);
                         }}
                     />
                     <NumberInput
@@ -169,21 +175,12 @@ export default function AdsRefactorPage() {
                             value != null &&
                             onParamChange("yearOfManufacture", value)
                         }
+                        onFocus={() => setFocusedField("yearOfManufacture")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
-                        styles={(theme, props) => {
-                            const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                        styles={() => {
+                            const isEmpty = !formData.params.yearOfManufacture;
+                            return getInputStyles("yearOfManufacture", isEmpty);
                         }}
                     />
                     <Select
@@ -195,21 +192,16 @@ export default function AdsRefactorPage() {
                             value != null &&
                             onParamChange("transmission", value)
                         }
+                        onFocus={() => setFocusedField("transmission")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.transmission ||
+                                (typeof formData.params.transmission ===
+                                    "string" &&
+                                    formData.params.transmission.trim() === "");
+                            return getInputStyles("transmission", isEmpty);
                         }}
                     />
                     <NumberInput
@@ -219,21 +211,12 @@ export default function AdsRefactorPage() {
                         onChange={(value) =>
                             value != null && onParamChange("mileage", value)
                         }
+                        onFocus={() => setFocusedField("mileage")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
-                        styles={(theme, props) => {
-                            const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                        styles={() => {
+                            const isEmpty = !formData.params.mileage;
+                            return getInputStyles("mileage", isEmpty);
                         }}
                     />
                     <NumberInput
@@ -243,18 +226,12 @@ export default function AdsRefactorPage() {
                         onChange={(value) =>
                             value != null && onParamChange("enginePower", value)
                         }
+                        onFocus={() => setFocusedField("enginePower")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
-                        styles={(theme, props) => {
-                            const isEmpty = props.value == null;
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                        styles={() => {
+                            const isEmpty = !formData.params.enginePower;
+                            return getInputStyles("enginePower", isEmpty);
                         }}
                     />
                 </Stack>
@@ -272,21 +249,15 @@ export default function AdsRefactorPage() {
                         onChange={(value) =>
                             value != null && onParamChange("type", value)
                         }
+                        onFocus={() => setFocusedField("re_type")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.type ||
+                                (typeof formData.params.type === "string" &&
+                                    formData.params.type.trim() === "");
+                            return getInputStyles("re_type", isEmpty);
                         }}
                     />
                     <TextInput
@@ -296,24 +267,18 @@ export default function AdsRefactorPage() {
                         onChange={(e) =>
                             onParamChange("address", e.target.value)
                         }
+                        onFocus={() => setFocusedField("address")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.address ||
+                                (typeof formData.params.address === "string" &&
+                                    formData.params.address.trim() === "");
+                            return getInputStyles("address", isEmpty);
                         }}
                     />
                     <NumberInput
@@ -323,18 +288,12 @@ export default function AdsRefactorPage() {
                         onChange={(value) =>
                             value != null && onParamChange("area", value)
                         }
+                        onFocus={() => setFocusedField("area")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
-                        styles={(theme, props) => {
-                            const isEmpty = props.value == null;
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                        styles={() => {
+                            const isEmpty = !formData.params.area;
+                            return getInputStyles("area", isEmpty);
                         }}
                     />
                     <NumberInput
@@ -344,18 +303,12 @@ export default function AdsRefactorPage() {
                         onChange={(value) =>
                             value != null && onParamChange("floor", value)
                         }
+                        onFocus={() => setFocusedField("floor")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
-                        styles={(theme, props) => {
-                            const isEmpty = props.value == null;
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                        styles={() => {
+                            const isEmpty = !formData.params.floor;
+                            return getInputStyles("floor", isEmpty);
                         }}
                     />
                 </Stack>
@@ -373,6 +326,8 @@ export default function AdsRefactorPage() {
                         onChange={(value) =>
                             value != null && onParamChange("type", value)
                         }
+                        onFocus={() => setFocusedField("el_type")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         onDropdownOpen={() => setOpenedType(true)}
                         onDropdownClose={() => setOpenedType(false)}
@@ -384,20 +339,12 @@ export default function AdsRefactorPage() {
                             )
                         }
                         rightSectionPointerEvents="none"
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.type ||
+                                (typeof formData.params.type === "string" &&
+                                    formData.params.type.trim() === "");
+                            return getInputStyles("el_type", isEmpty);
                         }}
                     />
                     <TextInput
@@ -405,24 +352,18 @@ export default function AdsRefactorPage() {
                         label="Бренд"
                         value={String(formData.params.brand || "")}
                         onChange={(e) => onParamChange("brand", e.target.value)}
+                        onFocus={() => setFocusedField("el_brand")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.brand ||
+                                (typeof formData.params.brand === "string" &&
+                                    formData.params.brand.trim() === "");
+                            return getInputStyles("el_brand", isEmpty);
                         }}
                     />
                     <TextInput
@@ -430,24 +371,18 @@ export default function AdsRefactorPage() {
                         label="Модель"
                         value={String(formData.params.model || "")}
                         onChange={(e) => onParamChange("model", e.target.value)}
+                        onFocus={() => setFocusedField("el_model")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.model ||
+                                (typeof formData.params.model === "string" &&
+                                    formData.params.model.trim() === "");
+                            return getInputStyles("el_model", isEmpty);
                         }}
                     />
                     <TextInput
@@ -455,24 +390,18 @@ export default function AdsRefactorPage() {
                         label="Цвет"
                         value={String(formData.params.color || "")}
                         onChange={(e) => onParamChange("color", e.target.value)}
+                        onFocus={() => setFocusedField("color")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         rightSection={
                             <IconCircleXFilled size={14} color="#D9D9D9" />
                         }
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.color ||
+                                (typeof formData.params.color === "string" &&
+                                    formData.params.color.trim() === "");
+                            return getInputStyles("color", isEmpty);
                         }}
                     />
                     <Select
@@ -483,6 +412,8 @@ export default function AdsRefactorPage() {
                         onChange={(value) =>
                             value != null && onParamChange("condition", value)
                         }
+                        onFocus={() => setFocusedField("condition")}
+                        onBlur={() => setFocusedField(null)}
                         w="100%"
                         onDropdownOpen={() => setOpenedCondition(true)}
                         onDropdownClose={() => setOpenedCondition(false)}
@@ -494,20 +425,13 @@ export default function AdsRefactorPage() {
                             )
                         }
                         rightSectionPointerEvents="none"
-                        styles={(theme, props) => {
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
-                            return {
-                                input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
-                                },
-                            };
+                                !formData.params.condition ||
+                                (typeof formData.params.condition ===
+                                    "string" &&
+                                    formData.params.condition.trim() === "");
+                            return getInputStyles("condition", isEmpty);
                         }}
                     />
                 </Stack>
@@ -537,19 +461,11 @@ export default function AdsRefactorPage() {
             <Stack maw={400} gap="md">
                 <Select
                     radius={8}
-                    styles={(theme, props) => {
+                    styles={() => {
                         const isEmpty =
-                            !props.value ||
-                            (typeof props.value === "string" &&
-                                props.value.trim() === "");
-                        return {
-                            input: {
-                                border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                "&:focus": {
-                                    borderColor: "var(--mantine-color-blue-6)",
-                                },
-                            },
-                        };
+                            !formData.category ||
+                            formData.category.trim() === "";
+                        return getInputStyles("category", isEmpty);
                     }}
                     label="Категория"
                     placeholder="Выберите категорию"
@@ -558,6 +474,8 @@ export default function AdsRefactorPage() {
                     onChange={(value) =>
                         value != null && onInputChange("category", value)
                     }
+                    onFocus={() => setFocusedField("category")}
+                    onBlur={() => setFocusedField(null)}
                     rightSectionPointerEvents="none"
                     w="100%"
                     onDropdownOpen={() => setOpenedCategory(true)}
@@ -576,24 +494,17 @@ export default function AdsRefactorPage() {
                     placeholder="Например, MacBook Pro 16"
                     value={formData.title}
                     onChange={(e) => onInputChange("title", e.target.value)}
+                    onFocus={() => setFocusedField("title")}
+                    onBlur={() => setFocusedField(null)}
                     withAsterisk
                     rightSection={
                         <IconCircleXFilled size={14} color="#D9D9D9" />
                     }
                     w="100%"
-                    styles={(theme, props) => {
+                    styles={() => {
                         const isEmpty =
-                            !props.value ||
-                            (typeof props.value === "string" &&
-                                props.value.trim() === "");
-                        return {
-                            input: {
-                                border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                "&:focus": {
-                                    borderColor: "var(--mantine-color-blue-6)",
-                                },
-                            },
-                        };
+                            !formData.title || formData.title.trim() === "";
+                        return getInputStyles("title", isEmpty);
                     }}
                 />
             </Stack>
@@ -609,17 +520,20 @@ export default function AdsRefactorPage() {
                     onChange={(value) =>
                         value != null && onInputChange("price", value)
                     }
+                    onFocus={() => setFocusedField("price")}
+                    onBlur={() => setFocusedField(null)}
                     withAsterisk
                     rightSection={
                         <IconCircleXFilled size={14} color="#D9D9D9" />
                     }
                     style={{ flex: 1, maxWidth: 400 }}
-                    styles={(theme, props) => {
-                        const isEmpty = props.value == null;
+                    styles={() => {
+                        const isEmpty = formData.price == null;
                         return {
                             input: {
                                 width: "100%",
-                                border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
+                                border: `2px solid ${getBorderColor("price", isEmpty)}`,
+                                transition: "border-color 0.2s ease",
                                 "&:focus": {
                                     borderColor: "var(--mantine-color-blue-6)",
                                 },
@@ -636,9 +550,7 @@ export default function AdsRefactorPage() {
                 >
                     <Box
                         style={{
-                            backgroundColor: aiPriceLoading
-                                ? "#EDF2FF"
-                                : "#FFF4E6",
+                            backgroundColor: "#FFF4E6",
                             padding: "8px 12px",
                             borderRadius: "6px",
                             display: "flex",
@@ -648,10 +560,16 @@ export default function AdsRefactorPage() {
                             whiteSpace: "nowrap",
                         }}
                     >
-                        <IconBulb size={14} color="#FD7E14" />
+                        {aiPriceLoading ? (
+                            <Loader size={14} color="#FD7E14" />
+                        ) : aiPriceMessage ? (
+                            <IconReload size={14} color="#FD7E14" />
+                        ) : (
+                            <IconBulb size={14} color="#FD7E14" />
+                        )}
                         <Text size="xs" c="#FD7E14" fw={500}>
-                            {aiPriceLoading
-                                ? "Запрос цены..."
+                            {aiPriceMessage
+                                ? "Повторить запрос"
                                 : "Узнать рыночную цену"}
                         </Text>
                     </Box>
@@ -679,22 +597,22 @@ export default function AdsRefactorPage() {
                         radius={12}
                         placeholder="Опишите ваш товар..."
                         minRows={4}
+                        autosize
+                        maxRows={15}
                         value={formData.description}
                         onChange={(e) =>
                             onInputChange("description", e.target.value)
                         }
-                        styles={(theme, props) => {
+                        onFocus={() => setFocusedField("description")}
+                        onBlur={() => setFocusedField(null)}
+                        styles={() => {
                             const isEmpty =
-                                !props.value ||
-                                (typeof props.value === "string" &&
-                                    props.value.trim() === "");
+                                !formData.description ||
+                                formData.description.trim() === "";
                             return {
                                 input: {
-                                    border: `2px solid ${isEmpty ? "var(--mantine-color-orange-6)" : "var(--mantine-color-gray-4)"}`,
-                                    "&:focus": {
-                                        borderColor:
-                                            "var(--mantine-color-blue-6)",
-                                    },
+                                    border: `2px solid ${getBorderColor("description", isEmpty)}`,
+                                    transition: "border-color 0.2s ease",
                                 },
                             };
                         }}
@@ -708,9 +626,7 @@ export default function AdsRefactorPage() {
                         >
                             <Box
                                 style={{
-                                    backgroundColor: aiDescriptionLoading
-                                        ? "#EDF2FF"
-                                        : "#FFF4E6",
+                                    backgroundColor: "#FFF4E6",
                                     padding: "6px 10px",
                                     borderRadius: "6px",
                                     display: "flex",
@@ -720,10 +636,16 @@ export default function AdsRefactorPage() {
                                     cursor: "pointer",
                                 }}
                             >
-                                <IconBulb size={14} color="#FD7E14" />
+                                {aiDescriptionLoading ? (
+                                    <Loader size={12} color="#FD7E14" />
+                                ) : aiDescriptionMessage ? (
+                                    <IconReload size={14} color="#FD7E14" />
+                                ) : (
+                                    <IconBulb size={14} color="#FD7E14" />
+                                )}
                                 <Text size="xs" c="#FD7E14" fw={500}>
-                                    {aiDescriptionLoading
-                                        ? "Генерация описания..."
+                                    {aiDescriptionMessage
+                                        ? "Повторить запрос"
                                         : "Улучшить описание"}
                                 </Text>
                             </Box>
@@ -732,11 +654,6 @@ export default function AdsRefactorPage() {
                             {formData.description.length} / 1000
                         </Text>
                     </Group>
-                    {aiDescriptionMessage && (
-                        <Text size="xs" c="teal" mt="xs">
-                            {aiDescriptionMessage}
-                        </Text>
-                    )}
                 </Stack>
 
                 <Group mt="xl">

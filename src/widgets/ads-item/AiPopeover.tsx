@@ -1,4 +1,12 @@
-import { Popover, Stack, Text, Group, Button } from "@mantine/core";
+import {
+    Popover,
+    Stack,
+    Text,
+    Group,
+    Button,
+    Divider,
+    Box,
+} from "@mantine/core";
 import { useState, ReactNode, useEffect } from "react";
 
 type Props = {
@@ -25,7 +33,7 @@ export function AiPopover({
     }, [loading, message]);
 
     const handleClick = async () => {
-        setOpened(false);
+        setOpened(true);
         await onRequest();
     };
 
@@ -36,7 +44,7 @@ export function AiPopover({
             position="top"
             withArrow
             shadow="md"
-            width={320}
+            width={350}
         >
             <Popover.Target>
                 <div onClick={handleClick} style={{ cursor: "pointer" }}>
@@ -45,27 +53,44 @@ export function AiPopover({
             </Popover.Target>
 
             <Popover.Dropdown>
-                <Stack>
-                    <Text fw={600}>Ответ AI:</Text>
+                <Stack gap="md">
+                    <Box>
+                        <Text fw={700} size="sm" c="blue" mb="xs">
+                            Ответ AI:
+                        </Text>
+                        <Divider />
+                    </Box>
 
-                    <Text size="sm">{message}</Text>
+                    <Box
+                        style={{
+                            maxHeight: 250,
+                            overflowY: "auto",
+                            lineHeight: 1.6,
+                        }}
+                    >
+                        <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
+                            {message}
+                        </Text>
+                    </Box>
 
-                    <Group>
+                    <Group justify="flex-end" gap="xs">
                         {onApply && (
                             <Button
-                                size="xs"
+                                size="sm"
                                 onClick={() => {
                                     onApply();
                                     setOpened(false);
                                 }}
+                                color="blue"
                             >
                                 Применить
                             </Button>
                         )}
 
                         <Button
-                            size="xs"
+                            size="sm"
                             variant="light"
+                            color="gray"
                             onClick={() => setOpened(false)}
                         >
                             Закрыть

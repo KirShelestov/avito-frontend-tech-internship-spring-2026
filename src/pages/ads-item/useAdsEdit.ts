@@ -136,7 +136,7 @@ export const useAdsEdit = () => {
     try {
       const { result, message } = await improveDescription(formData);
       setAiDescriptionResult(result);
-      setAiDescriptionMessage(message);
+      setAiDescriptionMessage(result);
     } catch (err) {
       console.error("AI Improve error", err);
       setAiDescriptionResult("");
@@ -154,7 +154,7 @@ export const useAdsEdit = () => {
     try {
       const { result, message } = await marketPrice(formData);
       setAiPriceResult(result);
-      setAiPriceMessage(message);
+      setAiPriceMessage(result);
     } catch (err) {
       console.error("AI Price error", err);
       setAiPriceResult("");
@@ -167,7 +167,7 @@ export const useAdsEdit = () => {
   const handleApplyDescription = () => {
     if (!aiDescriptionResult) return;
     updateField("description", aiDescriptionResult);
-    setAiDescriptionMessage("Описание применено.");
+    setAiDescriptionMessage("");
     setAiDescriptionResult("");
   };
 
@@ -181,7 +181,7 @@ export const useAdsEdit = () => {
     }
 
     updateField("price", price);
-    setAiPriceMessage(message);
+    setAiPriceMessage("");
     setAiPriceResult("");
   };
 
